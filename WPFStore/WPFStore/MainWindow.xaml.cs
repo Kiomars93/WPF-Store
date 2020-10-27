@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,12 +18,21 @@ namespace WPFStore
 {
     public partial class MainWindow : Window
     {
+        private List<Product> productList = new List<Product>
+        {
+            new Product { Titel = "BeadsNecklace", Description = "Original Beads straight from Thailand", Price = 320,
+                Picture = new BitmapImage(new Uri(@"Images\BeadsNecklace.jpg", UriKind.Relative)) },
+            new Product { Titel = "Diamond", Description = "Top notch Diamond from Bangladesh", Price = 5700,
+                Picture = new BitmapImage(new Uri(@"Images\Diamond.jpg", UriKind.Relative)) }
+        };
         public class Product
         {
             public string Titel;
             public string Description;
-            public Image Picture;
+            public decimal Price;
+            public BitmapImage Picture;
         }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -32,7 +42,7 @@ namespace WPFStore
         private void Start()
         {
             // Window options
-            Title = "GUI App";
+            Title = "Jewelery Store";
             Width = 400;
             Height = 300;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -46,24 +56,30 @@ namespace WPFStore
             Grid grid = new Grid();
             root.Content = grid;
             grid.Margin = new Thickness(5);
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
 
-            Grid imageGrid = new Grid
+            StackPanel imageGrid = new StackPanel
             {
+                Orientation = Orientation.Vertical,
                 MaxHeight = 300,
                 Margin = new Thickness(5)
             };
-            imageGrid.RowDefinitions.Add(new RowDefinition());
-            imageGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
             grid.Children.Add(imageGrid);
 
             Image normalImage = CreateImage(@"Images\BeadsNecklace.jpg");
             normalImage.Stretch = Stretch.None;
-            Grid.SetRow(normalImage, 0);
-            Grid.SetColumn(normalImage, 0);
             imageGrid.Children.Add(normalImage);
+            Grid.SetRow(imageGrid, 0);
+            Grid.SetColumn(imageGrid, 0);
+
+            foreach (Product product in productList)
+            {
+                var labelTitel = new Label { Content = product.Titel };
+                var labelPrice = new Label { Content = product.Price };
+                imageGrid.Children.Add(labelTitel);
+                imageGrid.Children.Add(labelPrice);
+            }
+
         }
 
         private Image CreateImage(string filePath)
