@@ -37,10 +37,9 @@ namespace WPFStore
         private void Start()
         {
             var filePath =
-                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\Cart.csv";
+                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\CurrentProduct.csv";
 
             var lines = File.ReadAllLines(filePath);
-            var product = new Product();
             
             foreach (var line in lines)
             {
