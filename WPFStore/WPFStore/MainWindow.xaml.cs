@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
@@ -18,19 +19,13 @@ namespace WPFStore
 {
     public partial class MainWindow : Window
     {
-        private List<Product> productList = new List<Product>
-        {
-            new Product { Titel = "BeadsNecklace", Description = "Original Beads straight from Thailand", Price = 320,
-                Picture = new BitmapImage(new Uri(@"Images\BeadsNecklace.jpg", UriKind.Relative)) },
-            new Product { Titel = "Diamond", Description = "Top notch Diamond from Bangladesh", Price = 5700,
-                Picture = new BitmapImage(new Uri(@"Images\Diamond.jpg", UriKind.Relative)) }
-        };
+        public List<Product> productList = new List<Product>();
         public class Product
         {
-            public string Titel;
+            public string Title;
             public string Description;
             public decimal Price;
-            public BitmapImage Picture;
+            public string Image;
         }
 
         public MainWindow()
@@ -41,6 +36,23 @@ namespace WPFStore
 
         private void Start()
         {
+            var filePath =
+                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\Cart.csv";
+
+            var lines = File.ReadAllLines(filePath);
+            var product = new Product();
+            
+            foreach (var line in lines)
+            {
+                var columnsInLine = line.Split(',');
+                productList.Add(new Product { Title = columnsInLine[0],
+                Description = columnsInLine[1],
+                Price = decimal.Parse(columnsInLine[2]),
+                Image = columnsInLine[3]});
+                
+            }
+
+
             // Window options
             Title = "Jewelery Store";
             Width = 400;
@@ -56,29 +68,43 @@ namespace WPFStore
             Grid grid = new Grid();
             root.Content = grid;
             grid.Margin = new Thickness(5);
-
-            StackPanel imageGrid = new StackPanel
+            grid.RowDefinitions.Add(new RowDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            var stackpanel = new StackPanel
             {
-                Orientation = Orientation.Vertical,
-                MaxHeight = 300,
-                Margin = new Thickness(5)
+                Orientation = Orientation.Vertical
             };
+            grid.Children.Add(stackpanel);
 
-            grid.Children.Add(imageGrid);
-
-            Image normalImage = CreateImage(@"Images\BeadsNecklace.jpg");
-            normalImage.Stretch = Stretch.None;
-            imageGrid.Children.Add(normalImage);
-            Grid.SetRow(imageGrid, 0);
-            Grid.SetColumn(imageGrid, 0);
-
-            foreach (Product product in productList)
+            foreach (var productItem in productList)
             {
-                var labelTitel = new Label { Content = product.Titel };
-                var labelPrice = new Label { Content = product.Price };
-                imageGrid.Children.Add(labelTitel);
-                imageGrid.Children.Add(labelPrice);
+                var titleLabel = new Label
+                {
+                    Content = productItem.Title,
+                };
+
+                var descriptionLabel = new Label
+                {
+                    Content = productItem.Description
+                };
+
+                var priceLabel = new Label
+                {
+                    Content = productItem.Price
+                };
+
+                var imageLabel = new Label
+                {
+                    Content = CreateImage(productItem.Image)
+                };
+                stackpanel.Children.Add(titleLabel);
+                stackpanel.Children.Add(descriptionLabel);
+                stackpanel.Children.Add(priceLabel);
+                stackpanel.Children.Add(imageLabel);
             }
+            
+            
+
 
         }
 
