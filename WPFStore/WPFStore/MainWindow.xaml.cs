@@ -36,21 +36,7 @@ namespace WPFStore
 
         private void Start()
         {
-            var filePath =
-                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\CurrentProduct.csv";
-
-            var lines = File.ReadAllLines(filePath);
-            
-            foreach (var line in lines)
-            {
-                var columnsInLine = line.Split(',');
-                productList.Add(new Product { Title = columnsInLine[0],
-                Description = columnsInLine[1],
-                Price = decimal.Parse(columnsInLine[2]),
-                Image = columnsInLine[3]});
-                
-            }
-
+            ReadCSVFile();
 
             // Window options
             Title = "Jewelery Store";
@@ -67,13 +53,22 @@ namespace WPFStore
             Grid grid = new Grid();
             root.Content = grid;
             grid.Margin = new Thickness(5);
-            grid.RowDefinitions.Add(new RowDefinition());
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             var stackpanel = new StackPanel
             {
                 Orientation = Orientation.Vertical
             };
             grid.Children.Add(stackpanel);
+            var currentProductLabel = new Label
+            {
+                Content = "Welcome to my shop. This is our current products:",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 14
+            };
+            stackpanel.Children.Add(currentProductLabel);
+            Grid.SetRow(currentProductLabel, 0);
 
             foreach (var productItem in productList)
             {
@@ -101,8 +96,8 @@ namespace WPFStore
                 stackpanel.Children.Add(priceLabel);
                 stackpanel.Children.Add(imageLabel);
             }
-            
-            
+
+
 
 
         }
@@ -122,5 +117,25 @@ namespace WPFStore
             return image;
         }
 
+        public void ReadCSVFile()
+        {
+            var filePath =
+                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\CurrentProduct.csv";
+
+            var lines = File.ReadAllLines(filePath);
+
+            foreach (var line in lines)
+            {
+                var columnsInLine = line.Split(',');
+                productList.Add(new Product
+                {
+                    Title = columnsInLine[0],
+                    Description = columnsInLine[1],
+                    Price = decimal.Parse(columnsInLine[2]),
+                    Image = columnsInLine[3]
+                });
+
+            }
+        }
     }
 }
