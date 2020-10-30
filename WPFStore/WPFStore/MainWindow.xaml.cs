@@ -54,6 +54,7 @@ namespace WPFStore
             root.Content = grid;
             grid.Margin = new Thickness(5);
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             Grid currentProductGrid = new Grid();
             grid.Children.Add(currentProductGrid);
@@ -67,17 +68,8 @@ namespace WPFStore
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
-            currentProductGrid.RowDefinitions.Add(new RowDefinition());
             currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
             currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
-
-
 
             var currentProductLabel = new Label
             {
@@ -227,9 +219,20 @@ namespace WPFStore
             Grid.SetColumn(fourthPriceLabel, 1);
             Grid.SetColumn(fourthImageLabel, 1);
 
-
-
-
+            var productPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            grid.Children.Add(productPanel);
+            var productListBox = new ListBox
+            {
+            };
+            productListBox.Items.Add(firstTitleLabel.Content);
+            productListBox.Items.Add(secondTitleLabel.Content);
+            Grid.SetRow(productPanel, 1);
+            productPanel.Children.Add(productListBox);
+            
+            
         }
 
         private Image CreateImage(string filePath)
