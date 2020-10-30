@@ -39,7 +39,7 @@ namespace WPFStore
             ReadCSVFile();
 
             // Window options
-            Title = "Jewelery Store";
+            Title = "Motorcycle Store";
             Width = 400;
             Height = 300;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -55,11 +55,11 @@ namespace WPFStore
             grid.Margin = new Thickness(5);
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
-            var stackpanel = new StackPanel
+            var currentProductGrid = new StackPanel
             {
                 Orientation = Orientation.Vertical
             };
-            grid.Children.Add(stackpanel);
+            grid.Children.Add(currentProductGrid);
             var currentProductLabel = new Label
             {
                 Content = "Welcome to my shop. This is our current products:",
@@ -67,7 +67,7 @@ namespace WPFStore
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 14
             };
-            stackpanel.Children.Add(currentProductLabel);
+            currentProductGrid.Children.Add(currentProductLabel);
             Grid.SetRow(currentProductLabel, 0);
 
             foreach (var productItem in productList)
@@ -91,10 +91,10 @@ namespace WPFStore
                 {
                     Content = CreateImage(productItem.Image)
                 };
-                stackpanel.Children.Add(titleLabel);
-                stackpanel.Children.Add(descriptionLabel);
-                stackpanel.Children.Add(priceLabel);
-                stackpanel.Children.Add(imageLabel);
+                currentProductGrid.Children.Add(titleLabel);
+                currentProductGrid.Children.Add(descriptionLabel);
+                currentProductGrid.Children.Add(priceLabel);
+                currentProductGrid.Children.Add(imageLabel);
             }
 
 
