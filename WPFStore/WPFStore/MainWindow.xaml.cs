@@ -20,12 +20,29 @@ namespace WPFStore
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
+        public Product mainProduct = new Product();
         ListBox productListBox;
         TextBox resultTextBox;
         Label firstTitleLabel;
         Label secondTitleLabel;
         Label thirdTitleLabel;
         Label fourthTitleLabel;
+
+        Label firstDescriptionLabel;
+        Label secondDescriptionLabel;
+        Label thirdDescriptionLabel;
+        Label fourthDescriptionLabel;
+
+        Label firstPriceLabel;
+        Label secondPriceLabel;
+        Label thirdPriceLabel;
+        Label fourthPriceLabel;
+
+        Label firstImageLabel;
+        Label secondImageLabel;
+        Label thirdImageLabel;
+        Label fourthImageLabel;
+
         decimal count = 1;
         decimal sum = 0;
         public class Product
@@ -91,25 +108,25 @@ namespace WPFStore
             Grid.SetRow(currentProductLabel, 0);
             Grid.SetColumnSpan(currentProductLabel, 2);
 
-            var firstProduct = productList[0];
+            mainProduct = productList[0];
             firstTitleLabel = new Label
             {
-                Content = firstProduct.Title,
+                Content = mainProduct.Title,
             };
 
-            var firstDescriptionLabel = new Label
+            firstDescriptionLabel = new Label
             {
-                Content = firstProduct.Description
+                Content = mainProduct.Description
             };
 
-            var firstPriceLabel = new Label
+            firstPriceLabel = new Label
             {
-                Content = firstProduct.Price
+                Content = mainProduct.Price
             };
 
-            var firstImageLabel = new Label
+            firstImageLabel = new Label
             {
-                Content = CreateImage(firstProduct.Image)
+                Content = CreateImage(mainProduct.Image)
             };
             currentProductGrid.Children.Add(firstTitleLabel);
             currentProductGrid.Children.Add(firstDescriptionLabel);
@@ -124,26 +141,26 @@ namespace WPFStore
             Grid.SetRow(firstImageLabel, 4);
             Grid.SetColumn(firstImageLabel, 0);
 
-            var secondProduct = productList[1];
+            mainProduct = productList[1];
 
             secondTitleLabel = new Label
             {
-                Content = secondProduct.Title,
+                Content = mainProduct.Title,
             };
 
-            var secondDescriptionLabel = new Label
+            secondDescriptionLabel = new Label
             {
-                Content = secondProduct.Description
+                Content = mainProduct.Description
             };
 
-            var secondPriceLabel = new Label
+            secondPriceLabel = new Label
             {
-                Content = secondProduct.Price
+                Content = mainProduct.Price
             };
 
-            var secondImageLabel = new Label
+            secondImageLabel = new Label
             {
-                Content = CreateImage(secondProduct.Image)
+                Content = CreateImage(mainProduct.Image)
             };
             currentProductGrid.Children.Add(secondTitleLabel);
             currentProductGrid.Children.Add(secondDescriptionLabel);
@@ -158,26 +175,26 @@ namespace WPFStore
             Grid.SetColumn(secondPriceLabel, 1);
             Grid.SetColumn(secondImageLabel, 1);
 
-            var thirdProduct = productList[2];
+            mainProduct = productList[2];
 
             thirdTitleLabel = new Label
             {
-                Content = thirdProduct.Title,
+                Content = mainProduct.Title,
             };
 
-            var thirdDescriptionLabel = new Label
+            thirdDescriptionLabel = new Label
             {
-                Content = thirdProduct.Description
+                Content = mainProduct.Description
             };
 
-            var thirdPriceLabel = new Label
+            thirdPriceLabel = new Label
             {
-                Content = thirdProduct.Price
+                Content = mainProduct.Price
             };
 
-            var thirdImageLabel = new Label
+            thirdImageLabel = new Label
             {
-                Content = CreateImage(thirdProduct.Image)
+                Content = CreateImage(mainProduct.Image)
             };
             currentProductGrid.Children.Add(thirdTitleLabel);
             currentProductGrid.Children.Add(thirdDescriptionLabel);
@@ -193,26 +210,26 @@ namespace WPFStore
             Grid.SetColumn(thirdImageLabel, 0);
 
 
-            var fourthProduct = productList[3];
+            mainProduct = productList[3];
 
             fourthTitleLabel = new Label
             {
-                Content = fourthProduct.Title,
+                Content = mainProduct.Title,
             };
 
-            var fourthDescriptionLabel = new Label
+            fourthDescriptionLabel = new Label
             {
-                Content = fourthProduct.Description
+                Content = mainProduct.Description
             };
 
-            var fourthPriceLabel = new Label
+            fourthPriceLabel = new Label
             {
-                Content = fourthProduct.Price
+                Content = mainProduct.Price
             };
 
-            var fourthImageLabel = new Label
+            fourthImageLabel = new Label
             {
-                Content = CreateImage(fourthProduct.Image)
+                Content = CreateImage(mainProduct.Image)
             };
             currentProductGrid.Children.Add(fourthTitleLabel);
             currentProductGrid.Children.Add(fourthDescriptionLabel);
@@ -239,24 +256,31 @@ namespace WPFStore
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             productPanel.Children.Add(chooseMenu);
-            productListBox = new ListBox
-            {
-            };
-            productListBox.Items.Add(firstTitleLabel.Content);
-            productListBox.Items.Add(secondTitleLabel.Content);
-            productListBox.Items.Add(thirdTitleLabel.Content);
-            productListBox.Items.Add(fourthTitleLabel.Content);
+            productListBox = new ListBox();
+            mainProduct = productList[0];
+            productListBox.Items.Add(mainProduct.Title);
+            mainProduct = productList[1];
+            productListBox.Items.Add(mainProduct.Title);
+            mainProduct = productList[2];
+            productListBox.Items.Add(mainProduct.Title);
+            mainProduct = productList[3];
+            productListBox.Items.Add(mainProduct.Title);
             Grid.SetRow(productPanel, 1);
             productPanel.Children.Add(productListBox);
 
+            var textLabel = new Label
+            {
+                Content = "Chosen items:"
+            };
+            productPanel.Children.Add(textLabel);
+
             resultTextBox = new TextBox
             {
-                Text = "Chosen items:",
                 IsReadOnly = true,
-                Margin = new Thickness(20)
             };
             productPanel.Children.Add(resultTextBox);
 
+            
             var addButton = new Button
             {
                 Content = "Add Item"
@@ -284,12 +308,16 @@ namespace WPFStore
         {
             if (productListBox.SelectedIndex == 0)
             {
-                resultTextBox.Text += $"{Environment.NewLine} You chose {count} {firstTitleLabel.Content}";
+                mainProduct = productList[0];
+                resultTextBox.Clear();
+                resultTextBox.Text += $"You chose {count} {mainProduct.Title}";
                 count++;
             }
             else if (productListBox.SelectedIndex == 1)
             {
-                resultTextBox.Text += $"{Environment.NewLine} You chose a {secondTitleLabel.Content}";
+                mainProduct = productList[1];
+                resultTextBox.Clear();
+                resultTextBox.Text += $"You chose {count} {mainProduct.Title}";
                 count++;
             }
             else if (productListBox.SelectedIndex == 2)
@@ -303,9 +331,9 @@ namespace WPFStore
                 count++;
             }
 
-            //Måste fixa detta.
-            sum += count;
-            resultTextBox.Text += "Sum:" + sum;
+            sum += mainProduct.Price;
+            resultTextBox.Text += $" Total amount: {sum}";
+
         }
 
         private Image CreateImage(string filePath)
