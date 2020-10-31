@@ -22,7 +22,7 @@ namespace WPFStore
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
         ListBox productListBox;
-        TextBox resultTextBox;
+        TextBox resultstackPanel;
         Label firstTitleLabel;
         Label secondTitleLabel;
         Label thirdTitleLabel;
@@ -43,7 +43,10 @@ namespace WPFStore
         Label thirdImageLabel;
         Label fourthImageLabel;
 
-        decimal count = 1;
+        decimal bmwCount = 1;
+        decimal harleyCount = 1;
+        decimal vintageCount = 1;
+        decimal woodyCount = 1;
         decimal sum = 0;
         public class Product
         {
@@ -244,6 +247,9 @@ namespace WPFStore
             Grid.SetColumn(fourthPriceLabel, 1);
             Grid.SetColumn(fourthImageLabel, 1);
 
+            // Every row above is just for showing my products.
+
+
             var productPanel = new StackPanel
             {
                 Orientation = Orientation.Vertical
@@ -256,17 +262,16 @@ namespace WPFStore
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             productPanel.Children.Add(chooseMenu);
+
             productListBox = new ListBox();
-            mainProduct = productList[0];
-            productListBox.Items.Add(mainProduct.Title);
-            mainProduct = productList[1];
-            productListBox.Items.Add(mainProduct.Title);
-            mainProduct = productList[2];
-            productListBox.Items.Add(mainProduct.Title);
-            mainProduct = productList[3];
-            productListBox.Items.Add(mainProduct.Title);
+            foreach (var productItem in productList)
+            {
+                productListBox.Items.Add(productItem.Title);
+            }
             Grid.SetRow(productPanel, 1);
             productPanel.Children.Add(productListBox);
+
+
 
             var textLabel = new Label
             {
@@ -274,13 +279,13 @@ namespace WPFStore
             };
             productPanel.Children.Add(textLabel);
 
-            resultTextBox = new TextBox
+            resultstackPanel = new TextBox
             {
                 IsReadOnly = true,
+                Padding = new Thickness(5, 5, 5, 50)
             };
-            productPanel.Children.Add(resultTextBox);
+            productPanel.Children.Add(resultstackPanel);
 
-            
             var addButton = new Button
             {
                 Content = "Add Item"
@@ -308,31 +313,30 @@ namespace WPFStore
         {
             if (productListBox.SelectedIndex == 0)
             {
-                mainProduct = productList[0];
-                resultTextBox.Clear();
-                resultTextBox.Text += $"You chose {count} {mainProduct.Title}";
-                count++;
+                resultstackPanel.Text += $"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}";
+                bmwCount++;
+                sum += productList[0].Price;
             }
             else if (productListBox.SelectedIndex == 1)
             {
-                mainProduct = productList[1];
-                resultTextBox.Clear();
-                resultTextBox.Text += $"You chose {count} {mainProduct.Title}";
-                count++;
+                resultstackPanel.Text += $"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}";
+                harleyCount++;
+                sum += productList[1].Price;
             }
             else if (productListBox.SelectedIndex == 2)
             {
-                resultTextBox.Text += $"{Environment.NewLine} You chose a {thirdTitleLabel.Content}";
-                count++;
+                resultstackPanel.Text += $"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}";
+                vintageCount++;
+                sum += productList[2].Price;
             }
             else if (productListBox.SelectedIndex == 3)
             {
-                resultTextBox.Text += $"{Environment.NewLine} You chose a {fourthTitleLabel.Content}";
-                count++;
+                resultstackPanel.Text += $"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}";
+                woodyCount++;
+                sum += productList[3].Price;
             }
 
-            sum += mainProduct.Price;
-            resultTextBox.Text += $" Total amount: {sum}";
+            resultstackPanel.Text += $" Total amount: {sum}{Environment.NewLine}";
 
         }
 
