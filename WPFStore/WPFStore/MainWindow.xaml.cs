@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
@@ -18,19 +19,21 @@ namespace WPFStore
 {
     public partial class MainWindow : Window
     {
-        private List<Product> productList = new List<Product>
-        {
-            new Product { Titel = "BeadsNecklace", Description = "Original Beads straight from Thailand", Price = 320,
-                Picture = new BitmapImage(new Uri(@"Images\BeadsNecklace.jpg", UriKind.Relative)) },
-            new Product { Titel = "Diamond", Description = "Top notch Diamond from Bangladesh", Price = 5700,
-                Picture = new BitmapImage(new Uri(@"Images\Diamond.jpg", UriKind.Relative)) }
-        };
+        public List<Product> productList = new List<Product>();
+        ListBox productListBox;
+        TextBox resultTextBox;
+        Label firstTitleLabel;
+        Label secondTitleLabel;
+        Label thirdTitleLabel;
+        Label fourthTitleLabel;
+        decimal count = 1;
+        decimal sum = 0;
         public class Product
         {
-            public string Titel;
+            public string Title;
             public string Description;
             public decimal Price;
-            public BitmapImage Picture;
+            public string Image;
         }
 
         public MainWindow()
@@ -41,8 +44,10 @@ namespace WPFStore
 
         private void Start()
         {
+            ReadCSVFile();
+
             // Window options
-            Title = "Jewelery Store";
+            Title = "Motorcycle Store";
             Width = 400;
             Height = 300;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -56,30 +61,251 @@ namespace WPFStore
             Grid grid = new Grid();
             root.Content = grid;
             grid.Margin = new Thickness(5);
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            Grid currentProductGrid = new Grid();
+            grid.Children.Add(currentProductGrid);
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.RowDefinitions.Add(new RowDefinition());
+            currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
-            StackPanel imageGrid = new StackPanel
+            var currentProductLabel = new Label
             {
-                Orientation = Orientation.Vertical,
-                MaxHeight = 300,
+                Content = "Welcome to my shop. This is our current products:",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 14,
                 Margin = new Thickness(5)
             };
+            currentProductGrid.Children.Add(currentProductLabel);
+            Grid.SetRow(currentProductLabel, 0);
+            Grid.SetColumnSpan(currentProductLabel, 2);
 
-            grid.Children.Add(imageGrid);
-
-            Image normalImage = CreateImage(@"Images\BeadsNecklace.jpg");
-            normalImage.Stretch = Stretch.None;
-            imageGrid.Children.Add(normalImage);
-            Grid.SetRow(imageGrid, 0);
-            Grid.SetColumn(imageGrid, 0);
-
-            foreach (Product product in productList)
+            var firstProduct = productList[0];
+            firstTitleLabel = new Label
             {
-                var labelTitel = new Label { Content = product.Titel };
-                var labelPrice = new Label { Content = product.Price };
-                imageGrid.Children.Add(labelTitel);
-                imageGrid.Children.Add(labelPrice);
+                Content = firstProduct.Title,
+            };
+
+            var firstDescriptionLabel = new Label
+            {
+                Content = firstProduct.Description
+            };
+
+            var firstPriceLabel = new Label
+            {
+                Content = firstProduct.Price
+            };
+
+            var firstImageLabel = new Label
+            {
+                Content = CreateImage(firstProduct.Image)
+            };
+            currentProductGrid.Children.Add(firstTitleLabel);
+            currentProductGrid.Children.Add(firstDescriptionLabel);
+            currentProductGrid.Children.Add(firstPriceLabel);
+            currentProductGrid.Children.Add(firstImageLabel);
+            Grid.SetRow(firstTitleLabel, 1);
+            Grid.SetColumn(firstTitleLabel, 0);
+            Grid.SetRow(firstDescriptionLabel, 2);
+            Grid.SetColumn(firstDescriptionLabel, 0);
+            Grid.SetRow(firstPriceLabel, 3);
+            Grid.SetColumn(firstPriceLabel, 0);
+            Grid.SetRow(firstImageLabel, 4);
+            Grid.SetColumn(firstImageLabel, 0);
+
+            var secondProduct = productList[1];
+
+            secondTitleLabel = new Label
+            {
+                Content = secondProduct.Title,
+            };
+
+            var secondDescriptionLabel = new Label
+            {
+                Content = secondProduct.Description
+            };
+
+            var secondPriceLabel = new Label
+            {
+                Content = secondProduct.Price
+            };
+
+            var secondImageLabel = new Label
+            {
+                Content = CreateImage(secondProduct.Image)
+            };
+            currentProductGrid.Children.Add(secondTitleLabel);
+            currentProductGrid.Children.Add(secondDescriptionLabel);
+            currentProductGrid.Children.Add(secondPriceLabel);
+            currentProductGrid.Children.Add(secondImageLabel);
+            Grid.SetRow(secondTitleLabel, 1);
+            Grid.SetRow(secondDescriptionLabel, 2);
+            Grid.SetRow(secondPriceLabel, 3);
+            Grid.SetRow(secondImageLabel, 4);
+            Grid.SetColumn(secondTitleLabel, 1);
+            Grid.SetColumn(secondDescriptionLabel, 1);
+            Grid.SetColumn(secondPriceLabel, 1);
+            Grid.SetColumn(secondImageLabel, 1);
+
+            var thirdProduct = productList[2];
+
+            thirdTitleLabel = new Label
+            {
+                Content = thirdProduct.Title,
+            };
+
+            var thirdDescriptionLabel = new Label
+            {
+                Content = thirdProduct.Description
+            };
+
+            var thirdPriceLabel = new Label
+            {
+                Content = thirdProduct.Price
+            };
+
+            var thirdImageLabel = new Label
+            {
+                Content = CreateImage(thirdProduct.Image)
+            };
+            currentProductGrid.Children.Add(thirdTitleLabel);
+            currentProductGrid.Children.Add(thirdDescriptionLabel);
+            currentProductGrid.Children.Add(thirdPriceLabel);
+            currentProductGrid.Children.Add(thirdImageLabel);
+            Grid.SetRow(thirdTitleLabel, 5);
+            Grid.SetRow(thirdDescriptionLabel, 6);
+            Grid.SetRow(thirdPriceLabel, 7);
+            Grid.SetRow(thirdImageLabel, 8);
+            Grid.SetColumn(thirdTitleLabel, 0);
+            Grid.SetColumn(thirdDescriptionLabel, 0);
+            Grid.SetColumn(thirdPriceLabel, 0);
+            Grid.SetColumn(thirdImageLabel, 0);
+
+
+            var fourthProduct = productList[3];
+
+            fourthTitleLabel = new Label
+            {
+                Content = fourthProduct.Title,
+            };
+
+            var fourthDescriptionLabel = new Label
+            {
+                Content = fourthProduct.Description
+            };
+
+            var fourthPriceLabel = new Label
+            {
+                Content = fourthProduct.Price
+            };
+
+            var fourthImageLabel = new Label
+            {
+                Content = CreateImage(fourthProduct.Image)
+            };
+            currentProductGrid.Children.Add(fourthTitleLabel);
+            currentProductGrid.Children.Add(fourthDescriptionLabel);
+            currentProductGrid.Children.Add(fourthPriceLabel);
+            currentProductGrid.Children.Add(fourthImageLabel);
+            Grid.SetRow(fourthTitleLabel, 5);
+            Grid.SetRow(fourthDescriptionLabel, 6);
+            Grid.SetRow(fourthPriceLabel, 7);
+            Grid.SetRow(fourthImageLabel, 8);
+            Grid.SetColumn(fourthTitleLabel, 1);
+            Grid.SetColumn(fourthDescriptionLabel, 1);
+            Grid.SetColumn(fourthPriceLabel, 1);
+            Grid.SetColumn(fourthImageLabel, 1);
+
+            var productPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            grid.Children.Add(productPanel);
+
+            var chooseMenu = new Label
+            {
+                Content = "Select your item",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            productPanel.Children.Add(chooseMenu);
+            productListBox = new ListBox
+            {
+            };
+            productListBox.Items.Add(firstTitleLabel.Content);
+            productListBox.Items.Add(secondTitleLabel.Content);
+            productListBox.Items.Add(thirdTitleLabel.Content);
+            productListBox.Items.Add(fourthTitleLabel.Content);
+            Grid.SetRow(productPanel, 1);
+            productPanel.Children.Add(productListBox);
+
+            resultTextBox = new TextBox
+            {
+                Text = "Chosen items:",
+                IsReadOnly = true,
+                Margin = new Thickness(20)
+            };
+            productPanel.Children.Add(resultTextBox);
+
+            var addButton = new Button
+            {
+                Content = "Add Item"
+            };
+            productPanel.Children.Add(addButton);
+
+
+            var removeButton = new Button
+            {
+                Content = "Remove an Item"
+            };
+            productPanel.Children.Add(removeButton);
+
+            var clearButton = new Button
+            {
+                Content = "Clear"
+            };
+            productPanel.Children.Add(clearButton);
+
+            addButton.Click += AddHandle;
+
+        }
+
+        private void AddHandle(object sender, RoutedEventArgs e)
+        {
+            if (productListBox.SelectedIndex == 0)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose {count} {firstTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 1)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {secondTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 2)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {thirdTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 3)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {fourthTitleLabel.Content}";
+                count++;
             }
 
+            //Måste fixa detta.
+            sum += count;
+            resultTextBox.Text += "Sum:" + sum;
         }
 
         private Image CreateImage(string filePath)
@@ -97,5 +323,25 @@ namespace WPFStore
             return image;
         }
 
+        public void ReadCSVFile()
+        {
+            var filePath =
+                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\CurrentProduct.csv";
+
+            var lines = File.ReadAllLines(filePath);
+
+            foreach (var line in lines)
+            {
+                var columnsInLine = line.Split(',');
+                productList.Add(new Product
+                {
+                    Title = columnsInLine[0],
+                    Description = columnsInLine[1],
+                    Price = decimal.Parse(columnsInLine[2]),
+                    Image = columnsInLine[3]
+                });
+
+            }
+        }
     }
 }
