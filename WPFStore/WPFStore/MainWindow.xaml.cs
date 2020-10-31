@@ -20,6 +20,14 @@ namespace WPFStore
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
+        ListBox productListBox;
+        TextBox resultTextBox;
+        Label firstTitleLabel;
+        Label secondTitleLabel;
+        Label thirdTitleLabel;
+        Label fourthTitleLabel;
+        decimal count = 1;
+        decimal sum = 0;
         public class Product
         {
             public string Title;
@@ -84,7 +92,7 @@ namespace WPFStore
             Grid.SetColumnSpan(currentProductLabel, 2);
 
             var firstProduct = productList[0];
-            var firstTitleLabel = new Label
+            firstTitleLabel = new Label
             {
                 Content = firstProduct.Title,
             };
@@ -115,10 +123,10 @@ namespace WPFStore
             Grid.SetColumn(firstPriceLabel, 0);
             Grid.SetRow(firstImageLabel, 4);
             Grid.SetColumn(firstImageLabel, 0);
-            
+
             var secondProduct = productList[1];
 
-            var secondTitleLabel = new Label
+            secondTitleLabel = new Label
             {
                 Content = secondProduct.Title,
             };
@@ -152,7 +160,7 @@ namespace WPFStore
 
             var thirdProduct = productList[2];
 
-            var thirdTitleLabel = new Label
+            thirdTitleLabel = new Label
             {
                 Content = thirdProduct.Title,
             };
@@ -185,26 +193,26 @@ namespace WPFStore
             Grid.SetColumn(thirdImageLabel, 0);
 
 
-            var foruthProduct = productList[3];
+            var fourthProduct = productList[3];
 
-            var fourthTitleLabel = new Label
+            fourthTitleLabel = new Label
             {
-                Content = foruthProduct.Title,
+                Content = fourthProduct.Title,
             };
 
             var fourthDescriptionLabel = new Label
             {
-                Content = foruthProduct.Description
+                Content = fourthProduct.Description
             };
 
             var fourthPriceLabel = new Label
             {
-                Content = foruthProduct.Price
+                Content = fourthProduct.Price
             };
 
             var fourthImageLabel = new Label
             {
-                Content = CreateImage(foruthProduct.Image)
+                Content = CreateImage(fourthProduct.Image)
             };
             currentProductGrid.Children.Add(fourthTitleLabel);
             currentProductGrid.Children.Add(fourthDescriptionLabel);
@@ -224,15 +232,80 @@ namespace WPFStore
                 Orientation = Orientation.Vertical
             };
             grid.Children.Add(productPanel);
-            var productListBox = new ListBox
+
+            var chooseMenu = new Label
+            {
+                Content = "Select your item",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            productPanel.Children.Add(chooseMenu);
+            productListBox = new ListBox
             {
             };
             productListBox.Items.Add(firstTitleLabel.Content);
             productListBox.Items.Add(secondTitleLabel.Content);
+            productListBox.Items.Add(thirdTitleLabel.Content);
+            productListBox.Items.Add(fourthTitleLabel.Content);
             Grid.SetRow(productPanel, 1);
             productPanel.Children.Add(productListBox);
-            
-            
+
+            resultTextBox = new TextBox
+            {
+                Text = "Chosen items:",
+                IsReadOnly = true,
+                Margin = new Thickness(20)
+            };
+            productPanel.Children.Add(resultTextBox);
+
+            var addButton = new Button
+            {
+                Content = "Add Item"
+            };
+            productPanel.Children.Add(addButton);
+
+
+            var removeButton = new Button
+            {
+                Content = "Remove an Item"
+            };
+            productPanel.Children.Add(removeButton);
+
+            var clearButton = new Button
+            {
+                Content = "Clear"
+            };
+            productPanel.Children.Add(clearButton);
+
+            addButton.Click += AddHandle;
+
+        }
+
+        private void AddHandle(object sender, RoutedEventArgs e)
+        {
+            if (productListBox.SelectedIndex == 0)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose {count} {firstTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 1)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {secondTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 2)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {thirdTitleLabel.Content}";
+                count++;
+            }
+            else if (productListBox.SelectedIndex == 3)
+            {
+                resultTextBox.Text += $"{Environment.NewLine} You chose a {fourthTitleLabel.Content}";
+                count++;
+            }
+
+            //Måste fixa detta.
+            sum += count;
+            resultTextBox.Text += "Sum:" + sum;
         }
 
         private Image CreateImage(string filePath)
