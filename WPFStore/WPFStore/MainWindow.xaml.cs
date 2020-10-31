@@ -24,8 +24,6 @@ namespace WPFStore
         ListBox productListBox;
 
         ListBox resultListBox;
-
-        TextBox resultstackPanel;
         
         Label firstTitleLabel;
         Label secondTitleLabel;
@@ -291,12 +289,12 @@ namespace WPFStore
 
 
 
-            resultstackPanel = new TextBox
-            {
-                IsReadOnly = true,
-                Padding = new Thickness(5, 5, 5, 50)
-            };
-            productPanel.Children.Add(resultstackPanel);
+            //resultstackPanel = new TextBox
+            //{
+            //    IsReadOnly = true,
+            //    Padding = new Thickness(5, 5, 5, 50)
+            //};
+            //productPanel.Children.Add(resultstackPanel);
 
             var addButton = new Button
             {
@@ -325,45 +323,61 @@ namespace WPFStore
         {
             if (productListBox.SelectedIndex == 0)
             {
-                resultstackPanel.Text += $"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}";
+                resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
                 bmwCount++;
                 sum += productList[0].Price;
             }
             else if (productListBox.SelectedIndex == 1)
             {
-                resultstackPanel.Text += $"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}";
+                resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
                 harleyCount++;
                 sum += productList[1].Price;
             }
             else if (productListBox.SelectedIndex == 2)
             {
-                resultstackPanel.Text += $"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}";
+                resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
                 vintageCount++;
                 sum += productList[2].Price;
             }
             else if (productListBox.SelectedIndex == 3)
             {
-                resultstackPanel.Text += $"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}";
+                resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
                 woodyCount++;
                 sum += productList[3].Price;
             }
 
-            resultstackPanel.Text += $" Total amount: {sum}{Environment.NewLine}";
+            resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
 
         }
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < productListBox.Items.Count; i++)
+            if (resultListBox.SelectedIndex == 0)
             {
-                if(resultListBox.SelectedIndex == i)
-                {
-                    bmwCount--;
-                    sum -= productList[0].Price;
-                }
+                resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
+                bmwCount--;
+                sum -= productList[0].Price;
+            }
+            else if (productListBox.SelectedIndex == 1)
+            {
+                resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
+                harleyCount--;
+                sum -= productList[1].Price;
+            }
+            else if (productListBox.SelectedIndex == 2)
+            {
+                resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
+                vintageCount--;
+                sum -= productList[2].Price;
+            }
+            else if (productListBox.SelectedIndex == 3)
+            {
+                resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
+                woodyCount--;
+                sum -= productList[3].Price;
             }
 
-            resultstackPanel.Text += $" Total amount: {sum}{Environment.NewLine}";
+            resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
         }
 
         private Image CreateImage(string filePath)
