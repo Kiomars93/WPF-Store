@@ -22,7 +22,11 @@ namespace WPFStore
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
         ListBox productListBox;
+
+        ListBox resultListBox;
+
         TextBox resultstackPanel;
+        
         Label firstTitleLabel;
         Label secondTitleLabel;
         Label thirdTitleLabel;
@@ -279,6 +283,14 @@ namespace WPFStore
             };
             productPanel.Children.Add(textLabel);
 
+            resultListBox = new ListBox 
+            {
+                Padding = new Thickness(5, 5, 5, 50)
+            };
+            productPanel.Children.Add(resultListBox);
+
+
+
             resultstackPanel = new TextBox
             {
                 IsReadOnly = true,
@@ -306,9 +318,9 @@ namespace WPFStore
             productPanel.Children.Add(clearButton);
 
             addButton.Click += AddHandle;
+            removeButton.Click += RemoveHandle;
 
         }
-
         private void AddHandle(object sender, RoutedEventArgs e)
         {
             if (productListBox.SelectedIndex == 0)
@@ -338,6 +350,20 @@ namespace WPFStore
 
             resultstackPanel.Text += $" Total amount: {sum}{Environment.NewLine}";
 
+        }
+
+        private void RemoveHandle(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < productListBox.Items.Count; i++)
+            {
+                if(resultListBox.SelectedIndex == i)
+                {
+                    bmwCount--;
+                    sum -= productList[0].Price;
+                }
+            }
+
+            resultstackPanel.Text += $" Total amount: {sum}{Environment.NewLine}";
         }
 
         private Image CreateImage(string filePath)
