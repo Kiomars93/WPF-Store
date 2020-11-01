@@ -29,7 +29,7 @@ namespace WPFStore
     {
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
-        List<Product> addedItemList;
+        List<Product> adjustmentList;
         ListBox productListBox;
         Label labelTextBox;
         ListBox resultListBox;
@@ -73,8 +73,8 @@ namespace WPFStore
 
             // Window options
             Title = "Motorcycle Store";
-            Width = 400;
-            Height = 300;
+            Width = 600;
+            Height = 800;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             // Scrolling
@@ -316,8 +316,30 @@ namespace WPFStore
 
             addButton.Click += AddHandle;
             removeButton.Click += RemoveHandle;
+            clearButton.Click += ClearHandle;
 
         }
+
+        private void ClearHandle(object sender, RoutedEventArgs e)
+        {
+            adjustmentList = new List<Product>();
+
+            ////För att visa priset av totalsumman i varukorgen!
+            //totalSum += listProducts[selectedIndex].Price;
+            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
+            //addedItemList = new List<Product>();
+
+            var bikeIndex = productListBox.SelectedIndex;
+            adjustmentList.Add(productList[bikeIndex]);
+
+            // Create a new textbox for you sumExpenses
+
+            foreach (var productItem in adjustmentList)
+            {
+                resultListBox.Items.Clear();
+            }
+        }
+
         private void AddHandle(object sender, RoutedEventArgs e)
         {
             //chartListBox.Items.Clear();
@@ -331,8 +353,8 @@ namespace WPFStore
             //    chartListBox.Items.Add(x.Title + " | " + x.Price.ToString("C"));
             //}
 
-            resultListBox.Items.Clear();
-            addedItemList = new List<Product>();
+            //resultListBox.Items.Clear();
+            adjustmentList = new List<Product>();
 
             ////För att visa priset av totalsumman i varukorgen!
             //totalSum += listProducts[selectedIndex].Price;
@@ -340,23 +362,17 @@ namespace WPFStore
             //addedItemList = new List<Product>();
 
             var bikeIndex = productListBox.SelectedIndex;
-            addedItemList.Add(productList[bikeIndex]);
+            adjustmentList.Add(productList[bikeIndex]);
 
             // Create a new textbox for you sumExpenses
-
-            foreach (var productItem in addedItemList)
+            
+            foreach (var productItem in adjustmentList)
             {
-                if (productItem.Equals(productItem))
-                {
-                    sum += productItem.Price;
-                    resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
-                }
-
+                sum += productItem.Price;
+                resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
+                
                 labelTextBox.Content = $"Total amount: {sum}";
-                //sum += productItem.Price;
-                //resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
             }
-
 
             //resultListBox.Items.Clear();
             //if (productListBox.SelectedIndex == 0)
@@ -390,33 +406,17 @@ namespace WPFStore
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
         {
-            //if (resultListBox.SelectedIndex == 0)
-            //{
-            //    resultListBox.Items.IndexOf(resultListBox.SelectedItem);
-            //    resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
-            //    bmwCount--;
-            //    sum -= productList[0].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 1)
-            //{
-            //    resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
-            //    harleyCount--;
-            //    sum -= productList[1].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 2)
-            //{
-            //    resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
-            //    vintageCount--;
-            //    sum -= productList[2].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 3)
-            //{
-            //    resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
-            //    woodyCount--;
-            //    sum -= productList[3].Price;
-            //}
 
-            //resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
+            var bikeIndex = resultListBox.SelectedIndex;
+
+            foreach (var productItem in adjustmentList)
+            {
+                sum -= productItem.Price;
+                resultListBox.Items.RemoveAt(bikeIndex);
+
+            }
+
+            labelTextBox.Content = $"Total amount: {sum}";
         }
 
         private Image CreateImage(string filePath)
