@@ -17,14 +17,23 @@ using System.Windows.Shapes;
 
 namespace WPFStore
 {
+    public class Product
+    {
+        public string Title;
+        public string Description;
+        public decimal Price;
+        public string Image;
+        public int Count = 1;
+    }
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
+        List<Product> addedItemList = new List<Product>();
         ListBox productListBox;
 
         ListBox resultListBox;
-        
+
         Label firstTitleLabel;
         Label secondTitleLabel;
         Label thirdTitleLabel;
@@ -45,18 +54,12 @@ namespace WPFStore
         Label thirdImageLabel;
         Label fourthImageLabel;
 
-        decimal bmwCount = 1;
-        decimal harleyCount = 1;
-        decimal vintageCount = 1;
-        decimal woodyCount = 1;
+        //decimal bmwCount = 1;
+        //decimal harleyCount = 1;
+        //decimal vintageCount = 1;
+        //decimal woodyCount = 1;
         decimal sum = 0;
-        public class Product
-        {
-            public string Title;
-            public string Description;
-            public decimal Price;
-            public string Image;
-        }
+
 
         public MainWindow()
         {
@@ -281,7 +284,7 @@ namespace WPFStore
             };
             productPanel.Children.Add(textLabel);
 
-            resultListBox = new ListBox 
+            resultListBox = new ListBox
             {
                 Padding = new Thickness(5, 5, 5, 50)
             };
@@ -321,63 +324,99 @@ namespace WPFStore
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
-            if (productListBox.SelectedIndex == 0)
+            //chartListBox.Items.Clear();
+            //int selectedIndex = productListBox.SelectedIndex;
+            //cartList.Add(listProducts[selectedIndex]);
+
+
+
+            //foreach (Product x in cartList)
+            //{
+            //    chartListBox.Items.Add(x.Title + " | " + x.Price.ToString("C"));
+            //}
+
+
+
+
+            ////För att visa priset av totalsumman i varukorgen!
+            //totalSum += listProducts[selectedIndex].Price;
+            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
+            //addedItemList = new List<Product>();
+            resultListBox.Items.Clear();
+            var selectedIndex = productListBox.SelectedIndex;
+            addedItemList.Add(productList[selectedIndex]);
+
+
+
+            foreach (var productItem in addedItemList)
             {
-                resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
-                bmwCount++;
-                sum += productList[0].Price;
-            }
-            else if (productListBox.SelectedIndex == 1)
-            {
-                resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
-                harleyCount++;
-                sum += productList[1].Price;
-            }
-            else if (productListBox.SelectedIndex == 2)
-            {
-                resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
-                vintageCount++;
-                sum += productList[2].Price;
-            }
-            else if (productListBox.SelectedIndex == 3)
-            {
-                resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
-                woodyCount++;
-                sum += productList[3].Price;
+                resultListBox.Items.Remove(productItem.Title);
+                sum += productItem.Price;
+                resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
+
             }
 
-            resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
+            
+
+            //resultListBox.Items.Clear();
+            //if (productListBox.SelectedIndex == 0)
+            //{
+            //    resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
+            //    bmwCount++;
+            //    sum += productList[0].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 1)
+            //{
+            //    resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
+            //    harleyCount++;
+            //    sum += productList[1].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 2)
+            //{
+            //    resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
+            //    vintageCount++;
+            //    sum += productList[2].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 3)
+            //{
+            //    resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
+            //    woodyCount++;
+            //    sum += productList[3].Price;
+            //}
+
+            //resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
 
         }
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
         {
-            if (resultListBox.SelectedIndex == 0)
-            {
-                resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
-                bmwCount--;
-                sum -= productList[0].Price;
-            }
-            else if (productListBox.SelectedIndex == 1)
-            {
-                resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
-                harleyCount--;
-                sum -= productList[1].Price;
-            }
-            else if (productListBox.SelectedIndex == 2)
-            {
-                resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
-                vintageCount--;
-                sum -= productList[2].Price;
-            }
-            else if (productListBox.SelectedIndex == 3)
-            {
-                resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
-                woodyCount--;
-                sum -= productList[3].Price;
-            }
+            //if (resultListBox.SelectedIndex == 0)
+            //{
+            //    resultListBox.Items.IndexOf(resultListBox.SelectedItem);
+            //    resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
+            //    bmwCount--;
+            //    sum -= productList[0].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 1)
+            //{
+            //    resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
+            //    harleyCount--;
+            //    sum -= productList[1].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 2)
+            //{
+            //    resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
+            //    vintageCount--;
+            //    sum -= productList[2].Price;
+            //}
+            //else if (productListBox.SelectedIndex == 3)
+            //{
+            //    resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
+            //    woodyCount--;
+            //    sum -= productList[3].Price;
+            //}
 
-            resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
+            //resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
         }
 
         private Image CreateImage(string filePath)
@@ -398,7 +437,7 @@ namespace WPFStore
         public void ReadCSVFile()
         {
             var filePath =
-                @"C:\Users\Kioma\Documents\GitHub\Teknikhögskolan\WPF-Store\WPFStore\WPFStore\CurrentProduct.csv";
+                "CurrentProduct.csv";
 
             var lines = File.ReadAllLines(filePath);
 
