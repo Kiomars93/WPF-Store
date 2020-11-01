@@ -29,9 +29,9 @@ namespace WPFStore
     {
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
-        List<Product> addedItemList = new List<Product>();
+        List<Product> addedItemList;
         ListBox productListBox;
-
+        Label labelTextBox;
         ListBox resultListBox;
 
         Label firstTitleLabel;
@@ -292,12 +292,8 @@ namespace WPFStore
 
 
 
-            //resultstackPanel = new TextBox
-            //{
-            //    IsReadOnly = true,
-            //    Padding = new Thickness(5, 5, 5, 50)
-            //};
-            //productPanel.Children.Add(resultstackPanel);
+            labelTextBox = new Label();
+            productPanel.Children.Add(labelTextBox);
 
             var addButton = new Button
             {
@@ -335,28 +331,32 @@ namespace WPFStore
             //    chartListBox.Items.Add(x.Title + " | " + x.Price.ToString("C"));
             //}
 
-
-
+            resultListBox.Items.Clear();
+            addedItemList = new List<Product>();
 
             ////För att visa priset av totalsumman i varukorgen!
             //totalSum += listProducts[selectedIndex].Price;
             //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
             //addedItemList = new List<Product>();
-            resultListBox.Items.Clear();
-            var selectedIndex = productListBox.SelectedIndex;
-            addedItemList.Add(productList[selectedIndex]);
 
+            var bikeIndex = productListBox.SelectedIndex;
+            addedItemList.Add(productList[bikeIndex]);
 
+            // Create a new textbox for you sumExpenses
 
             foreach (var productItem in addedItemList)
             {
-                resultListBox.Items.Remove(productItem.Title);
-                sum += productItem.Price;
-                resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
+                if (productItem.Equals(productItem))
+                {
+                    sum += productItem.Price;
+                    resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
+                }
 
+                labelTextBox.Content = $"Total amount: {sum}";
+                //sum += productItem.Price;
+                //resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
             }
 
-            
 
             //resultListBox.Items.Clear();
             //if (productListBox.SelectedIndex == 0)
