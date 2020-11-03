@@ -29,7 +29,7 @@ namespace WPFStore
     {
         public List<Product> productList = new List<Product>();
         public Product mainProduct = new Product();
-        List<Product> adjustmentList;
+        List<Product> adjustmentList = new List<Product>();
         ListBox productListBox;
         Label labelTextBox;
         ListBox resultListBox;
@@ -73,8 +73,8 @@ namespace WPFStore
 
             // Window options
             Title = "Motorcycle Store";
-            Width = 600;
-            Height = 800;
+            Width = 800;
+            Height = 1050;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             // Scrolling
@@ -319,27 +319,6 @@ namespace WPFStore
             clearButton.Click += ClearHandle;
 
         }
-
-        private void ClearHandle(object sender, RoutedEventArgs e)
-        {
-            adjustmentList = new List<Product>();
-
-            ////För att visa priset av totalsumman i varukorgen!
-            //totalSum += listProducts[selectedIndex].Price;
-            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
-            //addedItemList = new List<Product>();
-
-            var bikeIndex = productListBox.SelectedIndex;
-            adjustmentList.Add(productList[bikeIndex]);
-
-            // Create a new textbox for you sumExpenses
-
-            foreach (var productItem in adjustmentList)
-            {
-                resultListBox.Items.Clear();
-            }
-        }
-
         private void AddHandle(object sender, RoutedEventArgs e)
         {
             //chartListBox.Items.Clear();
@@ -354,12 +333,16 @@ namespace WPFStore
             //}
 
             //resultListBox.Items.Clear();
-            adjustmentList = new List<Product>();
 
             ////För att visa priset av totalsumman i varukorgen!
             //totalSum += listProducts[selectedIndex].Price;
             //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
             //addedItemList = new List<Product>();
+
+            //separera all data i dict eller list
+
+
+            //Resna gui så fort jag ändrar något.
 
             var bikeIndex = productListBox.SelectedIndex;
             adjustmentList.Add(productList[bikeIndex]);
@@ -418,7 +401,31 @@ namespace WPFStore
 
             labelTextBox.Content = $"Total amount: {sum}";
         }
+        private void ClearHandle(object sender, RoutedEventArgs e)
+        {
+            // Kör en try n catch senare där du kan
+            // ta emot felet isf bikeIndex är null
 
+            adjustmentList = new List<Product>();
+
+            ////För att visa priset av totalsumman i varukorgen!
+            //totalSum += listProducts[selectedIndex].Price;
+            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
+            //addedItemList = new List<Product>();
+
+            var bikeIndex = productListBox.SelectedIndex;
+            adjustmentList.Add(productList[bikeIndex]);
+
+            // Create a new textbox for you sumExpenses
+
+            foreach (var productItem in adjustmentList)
+            {
+                resultListBox.Items.Clear();
+            }
+
+            sum = 0;
+            labelTextBox.Content = $"Total amount: {sum}";
+        }
         private Image CreateImage(string filePath)
         {
             ImageSource scource = new BitmapImage(new Uri(filePath, UriKind.Relative));
