@@ -28,12 +28,11 @@ namespace WPFStore
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
-        public Product mainProduct = new Product();
-        List<Product> adjustmentList = new List<Product>();
+        public Product displayProducts = new Product();
+        Dictionary<string, decimal> adjustmentDictionary = new Dictionary<string, decimal>();
         ListBox productListBox;
         Label labelTextBox;
         ListBox resultListBox;
-
         Label firstTitleLabel;
         Label secondTitleLabel;
         Label thirdTitleLabel;
@@ -116,25 +115,25 @@ namespace WPFStore
             Grid.SetRow(currentProductLabel, 0);
             Grid.SetColumnSpan(currentProductLabel, 2);
 
-            mainProduct = productList[0];
+            displayProducts = productList[0];
             firstTitleLabel = new Label
             {
-                Content = mainProduct.Title,
+                Content = displayProducts.Title,
             };
 
             firstDescriptionLabel = new Label
             {
-                Content = mainProduct.Description
+                Content = displayProducts.Description
             };
 
             firstPriceLabel = new Label
             {
-                Content = mainProduct.Price
+                Content = displayProducts.Price
             };
 
             firstImageLabel = new Label
             {
-                Content = CreateImage(mainProduct.Image)
+                Content = CreateImage(displayProducts.Image)
             };
             currentProductGrid.Children.Add(firstTitleLabel);
             currentProductGrid.Children.Add(firstDescriptionLabel);
@@ -149,26 +148,26 @@ namespace WPFStore
             Grid.SetRow(firstImageLabel, 4);
             Grid.SetColumn(firstImageLabel, 0);
 
-            mainProduct = productList[1];
+            displayProducts = productList[1];
 
             secondTitleLabel = new Label
             {
-                Content = mainProduct.Title,
+                Content = displayProducts.Title,
             };
 
             secondDescriptionLabel = new Label
             {
-                Content = mainProduct.Description
+                Content = displayProducts.Description
             };
 
             secondPriceLabel = new Label
             {
-                Content = mainProduct.Price
+                Content = displayProducts.Price
             };
 
             secondImageLabel = new Label
             {
-                Content = CreateImage(mainProduct.Image)
+                Content = CreateImage(displayProducts.Image)
             };
             currentProductGrid.Children.Add(secondTitleLabel);
             currentProductGrid.Children.Add(secondDescriptionLabel);
@@ -183,26 +182,26 @@ namespace WPFStore
             Grid.SetColumn(secondPriceLabel, 1);
             Grid.SetColumn(secondImageLabel, 1);
 
-            mainProduct = productList[2];
+            displayProducts = productList[2];
 
             thirdTitleLabel = new Label
             {
-                Content = mainProduct.Title,
+                Content = displayProducts.Title,
             };
 
             thirdDescriptionLabel = new Label
             {
-                Content = mainProduct.Description
+                Content = displayProducts.Description
             };
 
             thirdPriceLabel = new Label
             {
-                Content = mainProduct.Price
+                Content = displayProducts.Price
             };
 
             thirdImageLabel = new Label
             {
-                Content = CreateImage(mainProduct.Image)
+                Content = CreateImage(displayProducts.Image)
             };
             currentProductGrid.Children.Add(thirdTitleLabel);
             currentProductGrid.Children.Add(thirdDescriptionLabel);
@@ -218,26 +217,26 @@ namespace WPFStore
             Grid.SetColumn(thirdImageLabel, 0);
 
 
-            mainProduct = productList[3];
+            displayProducts = productList[3];
 
             fourthTitleLabel = new Label
             {
-                Content = mainProduct.Title,
+                Content = displayProducts.Title,
             };
 
             fourthDescriptionLabel = new Label
             {
-                Content = mainProduct.Description
+                Content = displayProducts.Description
             };
 
             fourthPriceLabel = new Label
             {
-                Content = mainProduct.Price
+                Content = displayProducts.Price
             };
 
             fourthImageLabel = new Label
             {
-                Content = CreateImage(mainProduct.Image)
+                Content = CreateImage(displayProducts.Image)
             };
             currentProductGrid.Children.Add(fourthTitleLabel);
             currentProductGrid.Children.Add(fourthDescriptionLabel);
@@ -321,70 +320,22 @@ namespace WPFStore
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
-            //chartListBox.Items.Clear();
-            //int selectedIndex = productListBox.SelectedIndex;
-            //cartList.Add(listProducts[selectedIndex]);
-
-
-
-            //foreach (Product x in cartList)
-            //{
-            //    chartListBox.Items.Add(x.Title + " | " + x.Price.ToString("C"));
-            //}
-
-            //resultListBox.Items.Clear();
-
-            ////För att visa priset av totalsumman i varukorgen!
-            //totalSum += listProducts[selectedIndex].Price;
-            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
-            //addedItemList = new List<Product>();
-
-            //separera all data i dict eller list
-
-
-            //Resna gui så fort jag ändrar något.
+            //Separera all data i dictionary eller list
+            //Rensa gui så fort jag ändrar något.
 
             var bikeIndex = productListBox.SelectedIndex;
-            adjustmentList.Add(productList[bikeIndex]);
+            adjustmentDictionary.Add(productList[bikeIndex].Title, productList[bikeIndex].Price);
 
-            // Create a new textbox for you sumExpenses
-            
-            foreach (var productItem in adjustmentList)
+            foreach (KeyValuePair<string, decimal> productKey in adjustmentDictionary)
             {
-                sum += productItem.Price;
-                resultListBox.Items.Add($"{productItem.Title} {productItem.Count++} x {sum}");
-                
+                sum += productKey.Value;
+                resultListBox.Items.Insert(bikeIndex, $"{productKey.Key} {productList[bikeIndex].Count} x {productKey.Value}");
+                ////resultListBox.Items.Refresh();
                 labelTextBox.Content = $"Total amount: {sum}";
+                productList[bikeIndex].Count++;
+                //resultListBox.Items.Add(productKey);
             }
-
-            //resultListBox.Items.Clear();
-            //if (productListBox.SelectedIndex == 0)
-            //{
-            //    resultListBox.Items.Add($"You chose {bmwCount} with a price of {productList[0].Price} {productList[0].Title}");
-            //    bmwCount++;
-            //    sum += productList[0].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 1)
-            //{
-            //    resultListBox.Items.Add($"You chose {harleyCount} with a price of {productList[1].Price} {productList[1].Title}");
-            //    harleyCount++;
-            //    sum += productList[1].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 2)
-            //{
-            //    resultListBox.Items.Add($"You chose {vintageCount} with a price of {productList[2].Price} {productList[2].Title}");
-            //    vintageCount++;
-            //    sum += productList[2].Price;
-            //}
-            //else if (productListBox.SelectedIndex == 3)
-            //{
-            //    resultListBox.Items.Add($"You chose {woodyCount} with a price of {productList[3].Price} {productList[3].Title}");
-            //    woodyCount++;
-            //    sum += productList[3].Price;
-            //}
-
-            //resultListBox.Items.Add($" Total amount: {sum}{Environment.NewLine}");
-
+            adjustmentDictionary.Remove(productList[bikeIndex].Title);
         }
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
@@ -392,9 +343,9 @@ namespace WPFStore
 
             var bikeIndex = resultListBox.SelectedIndex;
 
-            foreach (var productItem in adjustmentList)
+            foreach (var productItem in adjustmentDictionary)
             {
-                sum -= productItem.Price;
+                //sum -= productItem.Price;
                 resultListBox.Items.RemoveAt(bikeIndex);
 
             }
@@ -406,25 +357,24 @@ namespace WPFStore
             // Kör en try n catch senare där du kan
             // ta emot felet isf bikeIndex är null
 
-            adjustmentList = new List<Product>();
 
             ////För att visa priset av totalsumman i varukorgen!
             //totalSum += listProducts[selectedIndex].Price;
             //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
             //addedItemList = new List<Product>();
 
-            var bikeIndex = productListBox.SelectedIndex;
-            adjustmentList.Add(productList[bikeIndex]);
+            //var bikeIndex = productListBox.SelectedIndex;
+            //adjustmentDictionary.Add(0,productList[bikeIndex]);
 
-            // Create a new textbox for you sumExpenses
+            //// Create a new textbox for you sumExpenses
 
-            foreach (var productItem in adjustmentList)
-            {
-                resultListBox.Items.Clear();
-            }
+            //foreach (var productItem in adjustmentDictionary)
+            //{
+            //    resultListBox.Items.Clear();
+            //}
 
-            sum = 0;
-            labelTextBox.Content = $"Total amount: {sum}";
+            //sum = 0;
+            //labelTextBox.Content = $"Total amount: {sum}";
         }
         private Image CreateImage(string filePath)
         {
