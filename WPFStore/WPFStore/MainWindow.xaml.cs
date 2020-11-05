@@ -52,7 +52,6 @@ namespace WPFStore
         Label secondImageLabel;
         Label thirdImageLabel;
         Label fourthImageLabel;
-
         //decimal bmwCount = 1;
         //decimal harleyCount = 1;
         //decimal vintageCount = 1;
@@ -68,7 +67,7 @@ namespace WPFStore
 
         private void Start()
         {
-            ReadCSVFile();
+            ReadCSVDisplayFile();
 
             // Window options
             Title = "Motorcycle Store";
@@ -102,6 +101,9 @@ namespace WPFStore
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
             currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
             currentProductGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+
+
 
             var currentProductLabel = new Label
             {
@@ -253,7 +255,6 @@ namespace WPFStore
 
             // Every row above is just for showing my products.
 
-
             var productPanel = new StackPanel
             {
                 Orientation = Orientation.Vertical
@@ -267,6 +268,7 @@ namespace WPFStore
             };
             productPanel.Children.Add(chooseMenu);
 
+
             productListBox = new ListBox();
             foreach (var productItem in productList)
             {
@@ -274,7 +276,6 @@ namespace WPFStore
             }
             Grid.SetRow(productPanel, 1);
             productPanel.Children.Add(productListBox);
-
 
 
             var textLabel = new Label
@@ -320,37 +321,84 @@ namespace WPFStore
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
-            //Separera all data i dictionary eller list
-            //Rensa gui så fort jag ändrar något.
+            // lägg 2 listor
+            // ena e för productList
+            // andra list är resultListBox.
+            // productlistan ska adderas med objektet och inte enbart titeln. Matcha det med titeln.
+            // bikeindex från productListBox som d e.
+            // productListBox[bikeIndex]
+            // Få ut titeln på den indexet (får sparas i nån varibel)
+            // kolla i resultListBox. Loopa igenom om det finns nåt som matchar min titeln så jag har sparat undan.
+            // om den matchar loopen som ska man uppdatera titeln på nåt sätt och om loopen ej matchar så ska det stacka på.
+            // refresh funktion kmr nog funka om det uppdaterar själva Items i  resultListBox
 
-            var bikeIndex = productListBox.SelectedIndex;
-            adjustmentDictionary.Add(productList[bikeIndex].Title, productList[bikeIndex].Price);
-
-            foreach (KeyValuePair<string, decimal> productKey in adjustmentDictionary)
+            //foreach (var productItem in productList)
+            //{
+            //    adjustmentList.Add(productItem);
+            //}
+            var a = adjustmentDictionary.ContainsKey("BMWCycle");
+            if (adjustmentDictionary.ContainsKey("BMWCycle"))
             {
-                sum += productKey.Value;
-                resultListBox.Items.Insert(bikeIndex, $"{productKey.Key} {productList[bikeIndex].Count} x {productKey.Value}");
-                ////resultListBox.Items.Refresh();
-                labelTextBox.Content = $"Total amount: {sum}";
-                productList[bikeIndex].Count++;
-                //resultListBox.Items.Add(productKey);
+                adjustmentDictionary["BMWCycle"] += 1;
             }
-            adjustmentDictionary.Remove(productList[bikeIndex].Title);
+            else
+            {
+                adjustmentDictionary["BMWCycle"] = 1; 
+            }
+
+
+            UpdateBox();
+
+            
+            //var bikeIndex = productListBox.SelectedIndex;
+
+            //adjustmentDictionary.Add(productList[bikeIndex]);
+
+
+            //foreach (var productItem in adjustmentDictionary)
+            //{
+            //    sum += productItem.Price;
+            //    resultListBox.Items.Insert(anotherIndex, $"{productItem.Title} {productList[bikeIndex].Count} x {productItem.Price}");
+            //    //resultListBox.Items.Add($"{productItem.Title} {productList[bikeIndex].Count} x {productItem.Price}");
+            //    productList[bikeIndex].Count++;
+            //    anotherIndex++;
+            //}
+
+            // Det gör så att jag får in en produkt i taget. Annars blir det fler producter per add click
+            //adjustmentDictionary.Remove(productList[bikeIndex]);
+
+            //foreach (var displayItem in adjustmentDictionary)
+            //{
+            //    labelTextBox.Content = $"Total amount: {sum}";
+            //}
+        }
+
+
+        private void UpdateBox()
+        {
+            resultListBox.Items.Clear();
+
+            foreach (var pair in adjustmentDictionary)
+            {
+                string bikeTitle = pair.Key;
+                decimal bikeAmount = pair.Value;
+                resultListBox.Items.Add($"{bikeTitle} x {bikeAmount}");
+            }
         }
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
         {
 
-            var bikeIndex = resultListBox.SelectedIndex;
+            //var bikeIndex = resultListBox.SelectedIndex;
 
-            foreach (var productItem in adjustmentDictionary)
-            {
-                //sum -= productItem.Price;
-                resultListBox.Items.RemoveAt(bikeIndex);
+            //foreach (var productItem in adjustmentDictionary)
+            //{
+            //    //sum -= productItem.Price;
+            //    resultListBox.Items.RemoveAt(bikeIndex);
 
-            }
+            //}
 
-            labelTextBox.Content = $"Total amount: {sum}";
+            //labelTextBox.Content = $"Total amount: {sum}";
         }
         private void ClearHandle(object sender, RoutedEventArgs e)
         {
@@ -391,7 +439,7 @@ namespace WPFStore
             return image;
         }
 
-        public void ReadCSVFile()
+        public void ReadCSVDisplayFile()
         {
             var filePath =
                 "CurrentProduct.csv";
