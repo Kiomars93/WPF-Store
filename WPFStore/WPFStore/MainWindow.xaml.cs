@@ -28,6 +28,7 @@ namespace WPFStore
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
+        public List<Product> TotalAmountList = new List<Product>();
         public Product displayProducts = new Product();
         Dictionary<string, decimal> adjustmentDictionary = new Dictionary<string, decimal>();
         ListBox productListBox;
@@ -67,6 +68,7 @@ namespace WPFStore
 
         private void Start()
         {
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             ReadCSVDisplayFile();
 
             // Window options
@@ -286,7 +288,7 @@ namespace WPFStore
 
             resultListBox = new ListBox
             {
-                Padding = new Thickness(5, 5, 5, 50)
+                Padding = new Thickness(5, 5, 5, 20)
             };
             productPanel.Children.Add(resultListBox);
 
@@ -321,59 +323,66 @@ namespace WPFStore
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
-            // lägg 2 listor
-            // ena e för productList
-            // andra list är resultListBox.
-            // productlistan ska adderas med objektet och inte enbart titeln. Matcha det med titeln.
-            // bikeindex från productListBox som d e.
-            // productListBox[bikeIndex]
-            // Få ut titeln på den indexet (får sparas i nån varibel)
-            // kolla i resultListBox. Loopa igenom om det finns nåt som matchar min titeln så jag har sparat undan.
-            // om den matchar loopen som ska man uppdatera titeln på nåt sätt och om loopen ej matchar så ska det stacka på.
-            // refresh funktion kmr nog funka om det uppdaterar själva Items i  resultListBox
-
-            //foreach (var productItem in productList)
-            //{
-            //    adjustmentList.Add(productItem);
-            //}
-            var a = adjustmentDictionary.ContainsKey("BMWCycle");
-            if (adjustmentDictionary.ContainsKey("BMWCycle"))
+            if (productListBox.SelectedIndex == 0)
             {
-                adjustmentDictionary["BMWCycle"] += 1;
+                if (adjustmentDictionary.ContainsKey("BMWCycle"))
+                {
+                    adjustmentDictionary["BMWCycle"] += 1;
+                }
+                else
+                {
+                    adjustmentDictionary["BMWCycle"] = 1;
+                }
             }
-            else
+            else if (productListBox.SelectedIndex == 1)
             {
-                adjustmentDictionary["BMWCycle"] = 1; 
+                if (adjustmentDictionary.ContainsKey("Harley"))
+                {
+                    adjustmentDictionary["Harley"] += 1;
+                }
+                else
+                {
+                    adjustmentDictionary["Harley"] = 1;
+                }
             }
-
-
+            else if (productListBox.SelectedIndex == 2)
+            {
+                if (adjustmentDictionary.ContainsKey("Vitage Style"))
+                {
+                    adjustmentDictionary["Vitage Style"] += 1;
+                }
+                else
+                {
+                    adjustmentDictionary["Vitage Style"] = 1;
+                }
+            }
+            else if (productListBox.SelectedIndex == 3)
+            {
+                if (adjustmentDictionary.ContainsKey("Woody"))
+                {
+                    adjustmentDictionary["Woody"] += 1;
+                }
+                else
+                {
+                    adjustmentDictionary["Woody"] = 1;
+                }
+            }
             UpdateBox();
-
             
-            //var bikeIndex = productListBox.SelectedIndex;
-
-            //adjustmentDictionary.Add(productList[bikeIndex]);
-
-
-            //foreach (var productItem in adjustmentDictionary)
-            //{
-            //    sum += productItem.Price;
-            //    resultListBox.Items.Insert(anotherIndex, $"{productItem.Title} {productList[bikeIndex].Count} x {productItem.Price}");
-            //    //resultListBox.Items.Add($"{productItem.Title} {productList[bikeIndex].Count} x {productItem.Price}");
-            //    productList[bikeIndex].Count++;
-            //    anotherIndex++;
-            //}
-
-            // Det gör så att jag får in en produkt i taget. Annars blir det fler producter per add click
-            //adjustmentDictionary.Remove(productList[bikeIndex]);
-
-            //foreach (var displayItem in adjustmentDictionary)
-            //{
-            //    labelTextBox.Content = $"Total amount: {sum}";
-            //}
+            TotalAmount();
         }
 
-
+        private void TotalAmount()
+        {
+            int bikeIndex = productListBox.SelectedIndex;
+            TotalAmountList.Add(productList[bikeIndex]);
+            foreach (var p in TotalAmountList)
+            {
+                sum += p.Price;
+                labelTextBox.Content = $"Total amount: {sum}";
+            }
+            TotalAmountList.Remove(productList[bikeIndex]);
+        }
         private void UpdateBox()
         {
             resultListBox.Items.Clear();
