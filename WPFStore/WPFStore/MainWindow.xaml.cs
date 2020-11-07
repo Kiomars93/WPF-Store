@@ -30,7 +30,7 @@ namespace WPFStore
         public List<Product> productList = new List<Product>();
         public List<Product> TotalAmountList = new List<Product>();
         public Product displayProducts = new Product();
-        Dictionary<string, decimal> adjustmentDictionary = new Dictionary<string, decimal>();
+        Dictionary<string, int> adjustmentDictionary = new Dictionary<string, int>();
         ListBox productListBox;
         Label labelTextBox;
         ListBox resultListBox;
@@ -319,14 +319,16 @@ namespace WPFStore
             addButton.Click += AddHandle;
             removeButton.Click += RemoveHandle;
             clearButton.Click += ClearHandle;
-
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
+            // backend(data) biten på add knappen.
+
             if (productListBox.SelectedIndex == 0)
             {
                 if (adjustmentDictionary.ContainsKey("BMWCycle"))
                 {
+                    // Man lägger til ett int type value eftersom den här Dicionarys value är int type.
                     adjustmentDictionary["BMWCycle"] += 1;
                 }
                 else
@@ -367,47 +369,89 @@ namespace WPFStore
                     adjustmentDictionary["Woody"] = 1;
                 }
             }
-            UpdateBox();
+
+            AddUpdateBox();
             
-            TotalAmount();
+            TotalIncreasedAmount();
         }
 
-        private void TotalAmount()
+        
+
+        private void RemoveHandle(object sender, RoutedEventArgs e)
+        {
+            // T.ex. om jag har fått in 3 olika produkter i resultListBox
+            // Jag ska kunna ta bort det valda indexet och 
+
+
+            if (productListBox.SelectedIndex == 0)
+            {
+                if (adjustmentDictionary.ContainsKey("BMWCycle"))
+                {
+                    adjustmentDictionary["BMWCycle"] = 1;
+                }
+                //else
+                //{
+                //    adjustmentDictionary["BMWCycle"] = 1;
+                //}
+            }
+            else if (productListBox.SelectedIndex == 1)
+            {
+                if (adjustmentDictionary.ContainsKey("Harley"))
+                {
+                    adjustmentDictionary["Harley"] = 1;
+                }
+                //else
+                //{
+                //    adjustmentDictionary["Harley"] = 1;
+                //}
+            }
+            else if (productListBox.SelectedIndex == 2)
+            {
+                if (adjustmentDictionary.ContainsKey("Vitage Style"))
+                {
+                    adjustmentDictionary["Vitage Style"] = 1;
+                }
+                //else
+                //{
+                //    adjustmentDictionary["Vitage Style"] = 1;
+                //}
+            }
+            else if (productListBox.SelectedIndex == 3)
+            {
+                if (adjustmentDictionary.ContainsKey("Woody"))
+                {
+                    adjustmentDictionary["Woody"] = 1;
+                }
+                //else
+                //{
+                //    adjustmentDictionary["Woody"] = 1;
+                //}
+            }
+
+            RemoveUpdateBox();
+            TotalDecreasedAmount();
+        }
+
+        private void RemoveUpdateBox()
+        {
+            foreach (var pair in adjustmentDictionary)
+            {
+                    string bikeTitle = pair.Key;
+                    int bikeAmount = pair.Value;
+                    adjustmentDictionary.Remove(bikeTitle);
+                    resultListBox.Items.Remove($"{bikeTitle} x {bikeAmount}");
+            }
+        }
+        private void TotalDecreasedAmount()
         {
             int bikeIndex = productListBox.SelectedIndex;
             TotalAmountList.Add(productList[bikeIndex]);
             foreach (var p in TotalAmountList)
             {
-                sum += p.Price;
+                sum -= p.Price;
                 labelTextBox.Content = $"Total amount: {sum}";
             }
             TotalAmountList.Remove(productList[bikeIndex]);
-        }
-        private void UpdateBox()
-        {
-            resultListBox.Items.Clear();
-
-            foreach (var pair in adjustmentDictionary)
-            {
-                string bikeTitle = pair.Key;
-                decimal bikeAmount = pair.Value;
-                resultListBox.Items.Add($"{bikeTitle} x {bikeAmount}");
-            }
-        }
-
-        private void RemoveHandle(object sender, RoutedEventArgs e)
-        {
-
-            //var bikeIndex = resultListBox.SelectedIndex;
-
-            //foreach (var productItem in adjustmentDictionary)
-            //{
-            //    //sum -= productItem.Price;
-            //    resultListBox.Items.RemoveAt(bikeIndex);
-
-            //}
-
-            //labelTextBox.Content = $"Total amount: {sum}";
         }
         private void ClearHandle(object sender, RoutedEventArgs e)
         {
@@ -466,6 +510,32 @@ namespace WPFStore
                     Image = columnsInLine[3]
                 });
 
+            }
+        }
+        private void TotalIncreasedAmount()
+        {
+            int bikeIndex = productListBox.SelectedIndex;
+            TotalAmountList.Add(productList[bikeIndex]);
+            foreach (var p in TotalAmountList)
+            {
+                sum += p.Price;
+                labelTextBox.Content = $"Total amount: {sum}";
+            }
+            TotalAmountList.Remove(productList[bikeIndex]);
+        }
+
+        
+
+        //GUI biten på add knappen.
+        private void AddUpdateBox()
+        {
+            resultListBox.Items.Clear();
+
+            foreach (var pair in adjustmentDictionary)
+            {
+                string bikeTitle = pair.Key;
+                int bikeAmount = pair.Value;
+                resultListBox.Items.Add($"{bikeTitle} x {bikeAmount}");
             }
         }
     }
