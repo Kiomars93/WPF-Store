@@ -58,7 +58,7 @@ namespace WPFStore
         //decimal vintageCount = 1;
         //decimal woodyCount = 1;
         decimal sum = 0;
-
+        int storeDictionaryValue = 0;
 
         public MainWindow()
         {
@@ -322,8 +322,8 @@ namespace WPFStore
         }
         private void AddHandle(object sender, RoutedEventArgs e)
         {
-            // backend(data) biten på add knappen.
-
+            // Backend(data) biten på add knappen.
+            
             if (productListBox.SelectedIndex == 0)
             {
                 if (adjustmentDictionary.ContainsKey("BMWCycle"))
@@ -370,6 +370,13 @@ namespace WPFStore
                 }
             }
 
+            
+            foreach (var item in adjustmentDictionary)
+            {
+                storeDictionaryValue = item.Value;
+            }
+
+
             AddUpdateBox();
             
             TotalIncreasedAmount();
@@ -387,45 +394,29 @@ namespace WPFStore
             {
                 if (adjustmentDictionary.ContainsKey("BMWCycle"))
                 {
-                    adjustmentDictionary["BMWCycle"] = 1;
+                    adjustmentDictionary["BMWCycle"] = storeDictionaryValue;
                 }
-                //else
-                //{
-                //    adjustmentDictionary["BMWCycle"] = 1;
-                //}
             }
             else if (productListBox.SelectedIndex == 1)
             {
                 if (adjustmentDictionary.ContainsKey("Harley"))
                 {
-                    adjustmentDictionary["Harley"] = 1;
+                    adjustmentDictionary["Harley"] = storeDictionaryValue;
                 }
-                //else
-                //{
-                //    adjustmentDictionary["Harley"] = 1;
-                //}
             }
             else if (productListBox.SelectedIndex == 2)
             {
                 if (adjustmentDictionary.ContainsKey("Vitage Style"))
                 {
-                    adjustmentDictionary["Vitage Style"] = 1;
+                    adjustmentDictionary["Vitage Style"] = storeDictionaryValue;
                 }
-                //else
-                //{
-                //    adjustmentDictionary["Vitage Style"] = 1;
-                //}
             }
             else if (productListBox.SelectedIndex == 3)
             {
                 if (adjustmentDictionary.ContainsKey("Woody"))
                 {
-                    adjustmentDictionary["Woody"] = 1;
+                    adjustmentDictionary["Woody"] = storeDictionaryValue;
                 }
-                //else
-                //{
-                //    adjustmentDictionary["Woody"] = 1;
-                //}
             }
 
             RemoveUpdateBox();
