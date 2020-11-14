@@ -25,14 +25,22 @@ namespace WPFStore
         public string Image;
         public int Count = 1;
     }
+    public class Discount
+    {
+        public string Code { get; set; }
+        public decimal CodePercentage { get; set; }
+    }
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
+        public List<Discount> discountList = new List<Discount>();
         public List<Product> TotalAmountList = new List<Product>();
         public Product displayProducts = new Product();
         Dictionary<string, int> adjustmentDictionary = new Dictionary<string, int>();
         ListBox productListBox;
-        Label labelTextBox;
+        Label labelSumTextBox;
+        Label discountLabel;
+        TextBox discountTextbox;
         ListBox resultListBox;
         Label firstTitleLabel;
         Label secondTitleLabel;
@@ -277,24 +285,6 @@ namespace WPFStore
             Grid.SetRow(productPanel, 1);
             productPanel.Children.Add(productListBox);
 
-
-            var textLabel = new Label
-            {
-                Content = "Chosen items:"
-            };
-            productPanel.Children.Add(textLabel);
-
-            resultListBox = new ListBox
-            {
-                Padding = new Thickness(5, 5, 5, 20)
-            };
-            productPanel.Children.Add(resultListBox);
-
-
-
-            labelTextBox = new Label();
-            productPanel.Children.Add(labelTextBox);
-
             var addButton = new Button
             {
                 Content = "Add Item"
@@ -317,7 +307,89 @@ namespace WPFStore
             addButton.Click += AddHandle;
             removeButton.Click += RemoveHandle;
             clearButton.Click += ClearHandle;
+
+            var textLabel = new Label
+            {
+                Content = "Cart:"
+            };
+            productPanel.Children.Add(textLabel);
+
+            resultListBox = new ListBox
+            {
+                Padding = new Thickness(5, 5, 5, 20)
+            };
+            productPanel.Children.Add(resultListBox);
+
+            // Rabattkoderna ska kunna användas hur många ggr som helst när öppnar o stänger ner programmet
+            // Men du ska ej kunna använda max en rabattkod vid varje beställning
+
+            discountLabel = new Label
+            {
+                Content = "Discountcode:"
+            };
+            productPanel.Children.Add(discountLabel);
+
+            discountTextbox = new TextBox();
+            productPanel.Children.Add(discountTextbox);
+
+            var discountButton = new Button
+            {
+                Content = "Add discountcode"
+            };
+            productPanel.Children.Add(discountButton);
+            discountButton.Click += DiscountHandle;
+
+            labelSumTextBox = new Label();
+            productPanel.Children.Add(labelSumTextBox);
+
+            var orderButton = new Button
+            {
+                Content = "Order"
+            };
+            productPanel.Children.Add(orderButton);
+
+            
         }
+
+        private void DiscountHandle(object sender, RoutedEventArgs e)
+        {
+
+            if (discountTextbox.Text.Length <= 3 || discountTextbox.Text.Length >= 20)
+            {
+                MessageBox.Show("Try again");
+            }
+            else
+            {
+                //ReadCSVDiscountFile();
+                var filePath = "Discount.csv";
+
+                var lines = File.ReadAllLines(filePath);
+
+                foreach (var line in lines)
+                {
+                    var columnsInLine = line.Split(',');
+                    discountList.Add(new Discount
+                    {
+                        Code = columnsInLine[0],
+                        CodePercentage = decimal.Parse(columnsInLine[1])
+                    });
+                }
+
+                if (filePath.Contains("Hellrider30"))
+                {
+                    TotalAmountList.Add(productList[0]);
+                }
+                else if (filePath.Contains("Hotwheel20"))
+                {
+
+                }
+                else if (filePath.Contains("Bmx10"))
+                {
+
+                }
+            }
+        }
+
         private void AddHandle(object sender, RoutedEventArgs e)
         {
             // Backend(data) biten på add knappen.
@@ -512,33 +584,21 @@ namespace WPFStore
             foreach (var p in TotalAmountList)
             {
                 sum -= p.Price;
-                labelTextBox.Content = $"Total amount: {sum}";
+                labelSumTextBox.Content = $"Total amount: {sum}";
             }
             TotalAmountList.Remove(productList[bikeIndex]);
         }
         private void ClearHandle(object sender, RoutedEventArgs e)
         {
-            // Kör en try n catch senare där du kan
-            // ta emot felet isf bikeIndex är null
-
-
-            //För att visa priset av totalsumman i varukorgen!
-            //totalSum += listProducts[selectedIndex].Price;
-            //totalSumInChart.Text = Math.Round(totalSum, 0).ToString("C");
-            //addedItemList = new List<Product>();
-
-            //var bikeIndex = productListBox.SelectedIndex;
-            //adjustmentDictionary.Add(0, productList[bikeIndex]);
-
-            // Create a new textbox for you sumExpenses
-
-            foreach (var productItem in adjustmentDictionary)
+            foreach (var pair in adjustmentDictionary)
             {
                 resultListBox.Items.Clear();
+                adjustmentDictionary.Remove(pair.Key);
+                resultListBox.Items.Remove($"{pair.Key} x {pair.Value}");
             }
 
             sum = 0;
-            labelTextBox.Content = $"Total amount: {sum}";
+            labelSumTextBox.Content = $"Total amount: {sum}";
         }
         private Image CreateImage(string filePath)
         {
@@ -557,8 +617,7 @@ namespace WPFStore
 
         public void ReadCSVDisplayFile()
         {
-            var filePath =
-                "CurrentProduct.csv";
+            var filePath = "CurrentProduct.csv";
 
             var lines = File.ReadAllLines(filePath);
 
@@ -572,9 +631,28 @@ namespace WPFStore
                     Price = decimal.Parse(columnsInLine[2]),
                     Image = columnsInLine[3]
                 });
-
             }
         }
+
+        //public void ReadCSVDiscountFile()
+        //{
+        //    var filePath = "Discount.csv";
+
+        //    var lines = File.ReadAllLines(filePath);
+
+        //    foreach (var line in lines)
+        //    {
+        //        var columnsInLine = line.Split(',');
+        //        productList.Add(new Product
+        //        {
+        //            Title = columnsInLine[0],
+        //            Description = columnsInLine[1],
+        //            Price = decimal.Parse(columnsInLine[2]),
+        //            Image = columnsInLine[3]
+        //        });
+        //    }
+        //}
+
         private void TotalIncreasedAmount()
         {
             int bikeIndex = productListBox.SelectedIndex;
@@ -582,7 +660,7 @@ namespace WPFStore
             foreach (var p in TotalAmountList)
             {
                 sum += p.Price;
-                labelTextBox.Content = $"Total amount: {sum}";
+                labelSumTextBox.Content = $"Total amount: {sum}";
             }
             TotalAmountList.Remove(productList[bikeIndex]);
         }
