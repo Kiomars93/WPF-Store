@@ -7,15 +7,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="CurrentProduct.csv">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Images\**">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="CurrentProduct.csv" />
+	  <None Remove="Discount.csv" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="CurrentProduct.csv">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Discount.csv">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>
