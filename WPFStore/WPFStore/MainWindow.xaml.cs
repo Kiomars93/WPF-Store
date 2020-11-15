@@ -38,7 +38,8 @@ namespace WPFStore
         public Product displayProducts = new Product();
         Dictionary<string, int> adjustmentDictionary = new Dictionary<string, int>();
         ListBox productListBox;
-        Label labelSumTextBox;
+        Label sumLabel;
+        Label discountSumLabel;
         Label discountLabel;
         TextBox discountTextbox;
         ListBox resultListBox;
@@ -61,6 +62,8 @@ namespace WPFStore
         Label secondImageLabel;
         Label thirdImageLabel;
         Label fourthImageLabel;
+
+        Button discountButton;
         //decimal bmwCount = 1;
         //decimal harleyCount = 1;
         //decimal vintageCount = 1;
@@ -332,29 +335,40 @@ namespace WPFStore
             discountTextbox = new TextBox();
             productPanel.Children.Add(discountTextbox);
 
-            var discountButton = new Button
+            discountButton = new Button
             {
                 Content = "Add discountcode"
             };
             productPanel.Children.Add(discountButton);
             discountButton.Click += DiscountHandle;
 
-            labelSumTextBox = new Label();
-            productPanel.Children.Add(labelSumTextBox);
+            sumLabel = new Label();
+            productPanel.Children.Add(sumLabel);
+
+            discountSumLabel = new Label();
+            productPanel.Children.Add(discountSumLabel);
 
             var orderButton = new Button
             {
                 Content = "Order"
             };
             productPanel.Children.Add(orderButton);
+            orderButton.Click += OrderHandle;
 
-            
+        }
+
+        private void OrderHandle(object sender, RoutedEventArgs e)
+        {
+            if (discountTextbox.Text == discountList[0].Code.ToLower())
+            {
+                discountButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void DiscountHandle(object sender, RoutedEventArgs e)
         {
 
-            if (discountTextbox.Text.Length <= 3 || discountTextbox.Text.Length >= 20)
+            if (discountTextbox.Text.Length < 3 || discountTextbox.Text.Length > 20)
             {
                 MessageBox.Show("Try again");
             }
@@ -374,18 +388,37 @@ namespace WPFStore
                         CodePercentage = decimal.Parse(columnsInLine[1])
                     });
                 }
+                //int bikeIndex = productListBox.SelectedIndex;
+                //TotalAmountList.Add(productList[bikeIndex]);
+                //foreach (var p in TotalAmountList)
+                //{
+                //    sum += p.Price * discountList[2].CodePercentage;
+                //    sumLabel.Content = $"Total amount: {sum}";
+                //}
+                //TotalAmountList.Remove(productList[bikeIndex]);
 
-                if (filePath.Contains("Hellrider30"))
+                if (discountTextbox.Text == discountList[0].Code.ToLower())
                 {
-                    TotalAmountList.Add(productList[0]);
+                    sum = sum * discountList[0].CodePercentage;
+                    sumLabel.Content = $"Total amount with discount: {sum}";
+                    discountSumLabel.Content = $"Discount percentage: {discountList[2].CodePercentage} % " +
+                        $"{Environment.NewLine} Your discount is added";
                 }
-                else if (filePath.Contains("Hotwheel20"))
+                else if (discountTextbox.Text == discountList[1].Code.ToLower())
                 {
-
+                    sum = sum * discountList[1].CodePercentage;
+                    sumLabel.Content = $"Total amount with discount: {sum}";
+                    discountSumLabel.Content = $"Discount percentage: {discountList[2].CodePercentage} % " +
+                        $"{Environment.NewLine} Your discount is added";
+                    discountButton.Visibility = Visibility.Collapsed;
                 }
-                else if (filePath.Contains("Bmx10"))
+                else if (discountTextbox.Text == discountList[2].Code.ToLower())
                 {
-
+                    sum = sum * discountList[1].CodePercentage;
+                    sumLabel.Content = $"Total amount with discount: {sum}";
+                    discountSumLabel.Content = $"Discount percentage: {discountList[2].CodePercentage} % " +
+                        $"{Environment.NewLine} Your discount is added";
+                    discountButton.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -584,7 +617,7 @@ namespace WPFStore
             foreach (var p in TotalAmountList)
             {
                 sum -= p.Price;
-                labelSumTextBox.Content = $"Total amount: {sum}";
+                sumLabel.Content = $"Total amount: {sum}";
             }
             TotalAmountList.Remove(productList[bikeIndex]);
         }
@@ -598,7 +631,7 @@ namespace WPFStore
             }
 
             sum = 0;
-            labelSumTextBox.Content = $"Total amount: {sum}";
+            sumLabel.Content = $"Total amount: {sum}";
         }
         private Image CreateImage(string filePath)
         {
@@ -660,7 +693,7 @@ namespace WPFStore
             foreach (var p in TotalAmountList)
             {
                 sum += p.Price;
-                labelSumTextBox.Content = $"Total amount: {sum}";
+                sumLabel.Content = $"Total amount: {sum}";
             }
             TotalAmountList.Remove(productList[bikeIndex]);
         }
