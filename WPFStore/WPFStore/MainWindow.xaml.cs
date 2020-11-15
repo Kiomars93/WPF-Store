@@ -63,6 +63,8 @@ namespace WPFStore
         Label thirdImageLabel;
         Label fourthImageLabel;
 
+        StackPanel productPanel;
+
         Button discountButton;
         //decimal bmwCount = 1;
         //decimal harleyCount = 1;
@@ -267,7 +269,7 @@ namespace WPFStore
 
             // Every row above is just for showing my products.
 
-            var productPanel = new StackPanel
+            productPanel = new StackPanel
             {
                 Orientation = Orientation.Vertical
             };
@@ -362,10 +364,11 @@ namespace WPFStore
         {
             foreach (var d in discountList)
             {
-                if(discountTextbox.Text == d.Code.ToLower())
-                {
-                    discountButton.Visibility = Visibility.Collapsed;
-                }
+                //if (discountTextbox.Text == d.Code.ToLower())
+                //{
+                productPanel.Visibility = Visibility.Collapsed;
+                discountButton.Visibility = Visibility.Collapsed;
+                //}
             }
             //if (discountTextbox.Text == discountList[0].Code.ToLower())
             //{
@@ -405,32 +408,42 @@ namespace WPFStore
                 //}
                 //TotalAmountList.Remove(productList[bikeIndex]);
 
+                var zeroHellRiderPercentage = discountList[0].CodePercentage * 0;
+                var zeroHotWheelPercentage = discountList[1].CodePercentage * 0;
+                var zeroBmxPercentage = discountList[2].CodePercentage * 0;
+
+                var newHellRiderPercentage = zeroHellRiderPercentage + discountList[0].CodePercentage;
+                var newZeroHotWheelPercentage = zeroHotWheelPercentage + discountList[1].CodePercentage;
+                var newZeroBmxPercentage = zeroBmxPercentage + discountList[2].CodePercentage;
+
                 if (discountTextbox.Text == discountList[0].Code.ToLower())
                 {
-                    sum = sum * discountList[0].CodePercentage;
+                    sum = newHellRiderPercentage;
                     sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {discountList[0].CodePercentage} % " +
+                    discountSumLabel.Content = $"Discount percentage: {newHellRiderPercentage} % " +
                         $"{Environment.NewLine} Your discount is added";
-                    discountButton.Visibility = Visibility.Hidden;
+                    //discountButton.Visibility = Visibility.Hidden;
                 }
                 else if (discountTextbox.Text == discountList[1].Code.ToLower())
                 {
-                    sum = sum * discountList[1].CodePercentage;
+                    sum = newZeroHotWheelPercentage;
                     sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {discountList[1].CodePercentage} % " +
+                    discountSumLabel.Content = $"Discount percentage: {newZeroHotWheelPercentage} % " +
                         $"{Environment.NewLine} Your discount is added";
-                    discountButton.Visibility = Visibility.Hidden;
+                    //discountButton.Visibility = Visibility.Hidden;
                 }
                 else if (discountTextbox.Text == discountList[2].Code.ToLower())
                 {
-                    sum = sum * discountList[2].CodePercentage;
+                    sum = sum * newZeroBmxPercentage;
                     sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {discountList[2].CodePercentage} % " +
+                    discountSumLabel.Content = $"Discount percentage: {newZeroBmxPercentage} % " +
                         $"{Environment.NewLine} Your discount is added";
-                    discountButton.Visibility = Visibility.Hidden;
+                    //discountButton.Visibility = Visibility.Hidden;
                 }
+
             }
         }
+
 
         private void AddHandle(object sender, RoutedEventArgs e)
         {
