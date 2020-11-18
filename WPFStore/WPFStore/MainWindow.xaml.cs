@@ -628,41 +628,22 @@ namespace WPFStore
 
         private void RemoveHandle(object sender, RoutedEventArgs e)
         {
-            // T.ex. om jag har fått in 3 olika produkter i resultListBox
-            // Jag ska kunna ta bort det valda indexet och 
-            //var bikeCount = 0;
-            //var bikeCount2 = 0;
-            //for (int i = 0; i < adjustmentDictionary.Count; i++)
-            //{
-            //    if (productListBox.SelectedIndex == i)
-            //    {
-            //        resultListBox.Items.Remove(i);
-            //    }
-
-            //}
-
+          //Lägg till en try n catch ifall man ej valt något av removed valen
             int bikeIndex = productListBox.SelectedIndex;
-            var test = resultListBox.SelectedItem.ToString().Substring(0, resultListBox.SelectedItem.ToString().IndexOf('x') - 1);
-            resultListBox.Items.Add($"{productList[bikeIndex].Title} x {productList[bikeIndex].Price}");
+            var bikeKey = resultListBox.SelectedItem.ToString().Substring(0, resultListBox.SelectedItem.ToString().IndexOf('x') - 3);
+            resultListBox.Items.Add($"{productList[bikeIndex].Title} x {productList[bikeIndex].Price} Kr");
 
-            if (!adjustmentDictionary.ContainsKey(test))
+            if (adjustmentDictionary[bikeKey] == 1)
             {
-                MessageBox.Show("Produkten finns ej att ta bort");
+                adjustmentDictionary.Remove(bikeKey);
+            }
+            else if (adjustmentDictionary[bikeKey] > 1)
+            {
+                adjustmentDictionary[bikeKey] -= 1;
             }
 
-            for (int i = 0; i < adjustmentDictionary.Count; i++)
-            {
-                if (adjustmentDictionary[test] == 1)
-                {
-                    adjustmentDictionary.Remove(test);
-                }
-                else if (adjustmentDictionary[test] > 1)
-                {
-                    adjustmentDictionary[test] -= 1;
-                }
-            }
             RemoveUpdateBox(bikeIndex);
-            //TotalDecreasedAmount();
+            TotalDecreasedAmount();
         }
 
         private void RemoveUpdateBox(int bikeIndex)
@@ -671,11 +652,10 @@ namespace WPFStore
             // Därefter kunna välja det valda indexet på något sätt och ta bort
             // Just det jag vill
             resultListBox.Items.Clear();
-
             foreach (var pair in adjustmentDictionary)
             {
                 //adjustmentDictionary.Remove(bikeTitle);
-                resultListBox.Items.Add($"{pair.Key} x {pair.Value}");
+                resultListBox.Items.Add($"{pair.Key} {pair.Value} x {productList[bikeIndex].Price} Kr");
             }
 
 
