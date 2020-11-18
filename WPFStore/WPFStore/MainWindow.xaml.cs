@@ -33,9 +33,11 @@ namespace WPFStore
     public partial class MainWindow : Window
     {
         public List<Product> productList = new List<Product>();
+        public List<Product> cartList = new List<Product>();
         public List<Discount> discountList = new List<Discount>();
         public List<Product> TotalAmountList = new List<Product>();
         public Product displayProducts = new Product();
+        public Product savedProducts = new Product();
         Dictionary<string, int> adjustmentDictionary = new Dictionary<string, int>();
         ListBox productListBox;
         Label sumLabel;
@@ -47,12 +49,13 @@ namespace WPFStore
         Label secondTitleLabel;
         Label thirdTitleLabel;
         Label fourthTitleLabel;
-
+        Grid grid;
+        Grid currentProductGrid;
         Label firstDescriptionLabel;
         Label secondDescriptionLabel;
         Label thirdDescriptionLabel;
         Label fourthDescriptionLabel;
-
+        Label receiptSumLabel;
         Label firstPriceLabel;
         Label secondPriceLabel;
         Label thirdPriceLabel;
@@ -65,14 +68,17 @@ namespace WPFStore
 
         StackPanel productPanel;
 
-        Button discountButton;
+        Button addDiscountButton;
+        Button deleteDiscountButton;
         //decimal bmwCount = 1;
         //decimal harleyCount = 1;
         //decimal vintageCount = 1;
         //decimal woodyCount = 1;
         decimal sum = 0;
         decimal percentageSum = 0;
+        decimal discountSum = 0;
         int storeDictionaryValue = 0;
+        bool once = true;
 
         public MainWindow()
         {
@@ -83,8 +89,14 @@ namespace WPFStore
         private void Start()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            ReadCSVDisplayFile();
+            
 
+            if (once) 
+            {
+                ReadCSVDisplayFile();
+                once = false;
+            }
+            
             // Window options
             Title = "Motorcycle Store";
             Width = 800;
@@ -97,13 +109,13 @@ namespace WPFStore
             Content = root;
 
             // Main grid
-            Grid grid = new Grid();
+            grid = new Grid();
             root.Content = grid;
             grid.Margin = new Thickness(5);
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition());
-            Grid currentProductGrid = new Grid();
+            currentProductGrid = new Grid();
             grid.Children.Add(currentProductGrid);
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
             currentProductGrid.RowDefinitions.Add(new RowDefinition());
@@ -297,7 +309,6 @@ namespace WPFStore
             };
             productPanel.Children.Add(addButton);
 
-
             var removeButton = new Button
             {
                 Content = "Remove an Item"
@@ -310,9 +321,11 @@ namespace WPFStore
             };
             productPanel.Children.Add(clearButton);
 
+
             addButton.Click += AddHandle;
             removeButton.Click += RemoveHandle;
             clearButton.Click += ClearHandle;
+
 
             var textLabel = new Label
             {
@@ -326,6 +339,15 @@ namespace WPFStore
             };
             productPanel.Children.Add(resultListBox);
 
+            var saveButton = new Button
+            {
+                Content = "Save Cart"
+            };
+            productPanel.Children.Add(saveButton);
+
+            saveButton.Click += SaveHandle;
+
+
             // Rabattkoderna ska kunna användas hur många ggr som helst när öppnar o stänger ner programmet
             // Men du ska ej kunna använda max en rabattkod vid varje beställning
 
@@ -338,12 +360,20 @@ namespace WPFStore
             discountTextbox = new TextBox();
             productPanel.Children.Add(discountTextbox);
 
-            discountButton = new Button
+            addDiscountButton = new Button
             {
                 Content = "Add discountcode"
             };
-            productPanel.Children.Add(discountButton);
-            discountButton.Click += DiscountHandle;
+            productPanel.Children.Add(addDiscountButton);
+            addDiscountButton.Click += AddDiscountHandle;
+
+            deleteDiscountButton = new Button
+            {
+                Content = "Delete discountcode"
+            };
+            productPanel.Children.Add(deleteDiscountButton);
+            deleteDiscountButton.Click += DeleteDiscountHandle;
+
 
             sumLabel = new Label();
             productPanel.Children.Add(sumLabel);
@@ -360,28 +390,114 @@ namespace WPFStore
 
         }
 
+
+
+        private void SaveHandle(object sender, RoutedEventArgs e)
+        {
+            var savedCartCsv = new StringBuilder();
+            string filePath = @"C:\Windows\Temp\savedCart.csv";
+            int bikeIndex = productListBox.SelectedIndex;
+            foreach (var pair in adjustmentDictionary)
+            {
+                // Får kontiga tecken när jag testkör ToString("C");
+                var newLine = $"{pair.Key} {pair.Value} x {productList[bikeIndex].Price} Kr";
+                savedCartCsv.AppendLine(newLine);
+
+            }
+            File.WriteAllText(filePath, savedCartCsv.ToString());
+
+
+        }
         private void OrderHandle(object sender, RoutedEventArgs e)
         {
-            foreach (var d in discountList)
+            productPanel.Visibility = Visibility.Collapsed;
+            currentProductGrid.Visibility = Visibility.Collapsed;
+            var receiptPanel = new StackPanel
             {
-                //if (discountTextbox.Text == d.Code.ToLower())
-                //{
-                productPanel.Visibility = Visibility.Collapsed;
-                discountButton.Visibility = Visibility.Collapsed;
-                //}
+                Orientation = Orientation.Vertical
+            };
+            grid.Children.Add(receiptPanel);
+            Grid.SetRow(receiptPanel, 1);
+
+            var productReceipt = new Label
+            {
+                Content = "Product Info: "
+            };
+            receiptPanel.Children.Add(productReceipt);
+
+
+            var receiptListView = new ListView
+            {
+                Padding = new Thickness(5, 5, 5, 50)
+            };
+            receiptPanel.Children.Add(receiptListView);
+
+            receiptSumLabel = new Label();
+            receiptPanel.Children.Add(receiptSumLabel);
+
+            var discountReceiptSumLabel = new Label();
+            receiptPanel.Children.Add(discountReceiptSumLabel);
+
+            var backButton = new Button
+            {
+                Content = "Back"
+            };
+            receiptPanel.Children.Add(backButton);
+            backButton.Click += BackHandle;
+            int bikeIndex = productListBox.SelectedIndex;
+            //TotalAmountList.Add(productList[bikeIndex]); 
+
+            foreach (var pair in adjustmentDictionary)
+            {
+                receiptListView.Items.Add($"{pair.Key} {pair.Value} x {productList[bikeIndex].Price} Kr");
             }
-            //if (discountTextbox.Text == discountList[0].Code.ToLower())
-            //{
-            //    discountButton.Visibility = Visibility.Collapsed;
-            //}
+            receiptSumLabel.Content = $"Total amount: {sum}";
+
+            var csvPercentage = 0M;
+            for (int i = 0; i < discountList.Count; i++)
+            {
+                var zeroPercentage = 0;
+                var actualPercentage = 100 * discountList[i].CodePercentage;
+                csvPercentage = zeroPercentage + discountList[i].CodePercentage;
+                if (discountTextbox.Text == discountList[i].Code.ToLower())
+                {
+                    //sum = newPercentage;
+                    sum = sum * csvPercentage;
+                    receiptSumLabel.Content = $"Total amount with discount: {sum}";
+                    discountReceiptSumLabel.Content = $"Discount percentage: {actualPercentage} % " +
+                        $"{Environment.NewLine} Your discount is added";
+                }
+            }
+
+
+            if (csvPercentage == 0)
+            {
+                discountReceiptSumLabel.Content = $"No DiscountCode added";
+            }
+            else
+            {
+                discountReceiptSumLabel.Content = $"Discount percentage: {csvPercentage} % ";
+            }
+
         }
 
-        private void DiscountHandle(object sender, RoutedEventArgs e)
+        private void BackHandle(object sender, RoutedEventArgs e)
+        {
+            Start();
+        }
+
+        private void AddDiscountHandle(object sender, RoutedEventArgs e)
         {
 
-            if (discountTextbox.Text.Length < 3 || discountTextbox.Text.Length > 20)
+
+            if (discountTextbox.Text == "")
             {
-                MessageBox.Show("Try again");
+                MessageBox.Show("You did't add any discountcode");
+            }
+            else if (discountTextbox.Text.Length < 3 || discountTextbox.Text.Length > 20)
+            {
+                MessageBox.Show($"You have to enter inbetween minimun of 3 characters and maximum of 20 characters!" +
+                    $"{Environment.NewLine} Also your letters have to small letters");
             }
             else
             {
@@ -399,51 +515,53 @@ namespace WPFStore
                         CodePercentage = decimal.Parse(columnsInLine[1])
                     });
                 }
-                //int bikeIndex = productListBox.SelectedIndex;
-                //TotalAmountList.Add(productList[bikeIndex]);
-                //foreach (var p in TotalAmountList)
-                //{
-                //    sum += p.Price * discountList[2].CodePercentage;
-                //    sumLabel.Content = $"Total amount: {sum}";
-                //}
-                //TotalAmountList.Remove(productList[bikeIndex]);
 
-                var zeroHellRiderPercentage = discountList[0].CodePercentage * 0;
-                var zeroHotWheelPercentage = discountList[1].CodePercentage * 0;
-                var zeroBmxPercentage = discountList[2].CodePercentage * 0;
+                deleteDiscountButton.IsEnabled = true;
 
-                var newHellRiderPercentage = zeroHellRiderPercentage + discountList[0].CodePercentage;
-                var newZeroHotWheelPercentage = zeroHotWheelPercentage + discountList[1].CodePercentage;
-                var newZeroBmxPercentage = zeroBmxPercentage + discountList[2].CodePercentage;
-
-                if (discountTextbox.Text == discountList[0].Code.ToLower())
+                for (int i = 0; i < discountList.Count; i++)
                 {
-                    sum = newHellRiderPercentage;
-                    sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {newHellRiderPercentage} % " +
-                        $"{Environment.NewLine} Your discount is added";
-                    //discountButton.Visibility = Visibility.Hidden;
+                    var zeroPercentage = 0;
+                    var actualPercentage = 100 * discountList[i].CodePercentage;
+                    var csvPercentage = zeroPercentage + discountList[i].CodePercentage;
+                    if (discountTextbox.Text == discountList[i].Code.ToLower())
+                    {
+                        discountSum = sum * csvPercentage;
+                        sumLabel.Content = $"Total amount with discount: {discountSum}";
+                        discountSumLabel.Content = $"Discount percentage: {actualPercentage} % " +
+                            $"{Environment.NewLine} Your discount is added";
+                    }
                 }
-                else if (discountTextbox.Text == discountList[1].Code.ToLower())
-                {
-                    sum = newZeroHotWheelPercentage;
-                    sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {newZeroHotWheelPercentage} % " +
-                        $"{Environment.NewLine} Your discount is added";
-                    //discountButton.Visibility = Visibility.Hidden;
-                }
-                else if (discountTextbox.Text == discountList[2].Code.ToLower())
-                {
-                    sum = sum * newZeroBmxPercentage;
-                    sumLabel.Content = $"Total amount with discount: {sum}";
-                    discountSumLabel.Content = $"Discount percentage: {newZeroBmxPercentage} % " +
-                        $"{Environment.NewLine} Your discount is added";
-                    //discountButton.Visibility = Visibility.Hidden;
-                }
-
+                addDiscountButton.IsEnabled = false;
             }
         }
+        private void DeleteDiscountHandle(object sender, RoutedEventArgs e)
+        {
+            bool valid = false;
+            for (int i = 0; i < discountList.Count; i++)
+            {
+                var zeroPercentage = 0;
+                var actualPercentage = 100 * discountList[i].CodePercentage;
+                var csvPercentage = zeroPercentage + discountList[i].CodePercentage;
+                if (discountTextbox.Text == discountList[i].Code.ToLower())
+                {
+                    //sum = newPercentage;
+                    //sum = sum / newPercentage;
+                    discountSum = discountSum / csvPercentage;
+                    sumLabel.Content = $"Total amount with discount: {discountSum}";
+                    discountSumLabel.Content = $"Discount percentage: {actualPercentage} % " +
+                        $"{Environment.NewLine} Your discount is added";
+                    valid = true;
+                    break;
+                }
+            }
+            if (valid)
+            {
+                deleteDiscountButton.IsEnabled = false;
+            }
+            addDiscountButton.IsEnabled = true;
 
+
+        }
 
         private void AddHandle(object sender, RoutedEventArgs e)
         {
@@ -524,54 +642,25 @@ namespace WPFStore
             //}
 
             int bikeIndex = productListBox.SelectedIndex;
+            var test = resultListBox.SelectedItem.ToString().Substring(0, resultListBox.SelectedItem.ToString().IndexOf('x') - 1);
             resultListBox.Items.Add($"{productList[bikeIndex].Title} x {productList[bikeIndex].Price}");
 
-            if (resultListBox.SelectedIndex == bikeIndex)
+            if (!adjustmentDictionary.ContainsKey(test))
             {
-                if (adjustmentDictionary.ContainsKey("BMWCycle"))
-                {
-                    adjustmentDictionary["BMWCycle"] -= 1;
-                }
-                //else
-                //{
-                //    adjustmentDictionary["BMWCycle"] = 1;
-                //}
+                MessageBox.Show("Produkten finns ej att ta bort");
             }
-            else if (resultListBox.SelectedIndex == bikeIndex)
-            {
-                if (adjustmentDictionary.ContainsKey("Harley"))
-                {
-                    adjustmentDictionary["Harley"] -= 1;
-                }
-                //else
-                //{
-                //    adjustmentDictionary["Harley"] = 1;
-                //}
-            }
-            //else 
-            //if (productListBox.SelectedIndex == 2)
-            //{
-            //    if (adjustmentDictionary.ContainsKey("Vitage Style"))
-            //    {
-            //        adjustmentDictionary["Vitage Style"] = storeDictionaryValue;
-            //    }
-            //    //else
-            //    //{
-            //    //    adjustmentDictionary["Vitage Style"] = 1;
-            //    //}
-            //}
-            //else if (productListBox.SelectedIndex == 3)
-            //{
-            //    if (adjustmentDictionary.ContainsKey("Woody"))
-            //    {
-            //        adjustmentDictionary["Woody"] = storeDictionaryValue;
-            //    }
-            //    //else
-            //    //{
-            //    //    adjustmentDictionary["Woody"] = 1;
-            //    //}
-            //}
 
+            for (int i = 0; i < adjustmentDictionary.Count; i++)
+            {
+                if (adjustmentDictionary[test] == 1)
+                {
+                    adjustmentDictionary.Remove(test);
+                }
+                else if (adjustmentDictionary[test] > 1)
+                {
+                    adjustmentDictionary[test] -= 1;
+                }
+            }
             RemoveUpdateBox(bikeIndex);
             //TotalDecreasedAmount();
         }
@@ -655,7 +744,7 @@ namespace WPFStore
             sum = 0;
             percentageSum = 0;
             sumLabel.Content = $"Total amount: {sum}";
-            discountButton.Visibility = Visibility.Visible;
+            addDiscountButton.Visibility = Visibility.Visible;
             discountSumLabel.Content = $"Discount percentage: {percentageSum} % ";
         }
         private Image CreateImage(string filePath)
@@ -679,6 +768,7 @@ namespace WPFStore
 
             var lines = File.ReadAllLines(filePath);
 
+
             foreach (var line in lines)
             {
                 var columnsInLine = line.Split(',');
@@ -690,6 +780,11 @@ namespace WPFStore
                     Image = columnsInLine[3]
                 });
             }
+            foreach (var item in productList)
+            {
+                cartList.Add(item);
+            }
+
         }
 
         //public void ReadCSVDiscountFile()
@@ -730,12 +825,10 @@ namespace WPFStore
         private void AddUpdateBox()
         {
             resultListBox.Items.Clear();
-
+            int bikeIndex = productListBox.SelectedIndex;
             foreach (var pair in adjustmentDictionary)
             {
-                string bikeTitle = pair.Key;
-                int bikeAmount = pair.Value;
-                resultListBox.Items.Add($"{bikeTitle} x {bikeAmount}");
+                resultListBox.Items.Add($"{pair.Key} {pair.Value} x {productList[bikeIndex].Price} Kr");
             }
         }
     }
