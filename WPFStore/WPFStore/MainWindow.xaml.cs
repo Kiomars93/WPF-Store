@@ -405,7 +405,7 @@ namespace WPFStore
 
             }
             File.WriteAllText(filePath, savedCartCsv.ToString());
-
+            MessageBox.Show("You saved your cart content");
 
         }
         private void OrderHandle(object sender, RoutedEventArgs e)
@@ -813,27 +813,13 @@ namespace WPFStore
             addDiscountButton.Visibility = Visibility.Visible;
             discountSumLabel.Content = $"Discount percentage: {percentageSum} % ";
         }
-        private Image CreateImage(string filePath)
-        {
-            ImageSource scource = new BitmapImage(new Uri(filePath, UriKind.Relative));
-            Image image = new Image
-            {
-                Source = scource,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(5)
-            };
-
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
-            return image;
-        }
+        
 
         public void ReadCSVDisplayFile()
         {
             var filePath = "CurrentProduct.csv";
 
             var lines = File.ReadAllLines(filePath);
-
 
             foreach (var line in lines)
             {
@@ -846,12 +832,15 @@ namespace WPFStore
                     Image = columnsInLine[3]
                 });
             }
+
             foreach (var item in productList)
             {
                 cartList.Add(item);
             }
 
         }
+
+        // Jag bör använda mig utav metoden nedan
 
         //public void ReadCSVDiscountFile()
         //{
@@ -871,6 +860,24 @@ namespace WPFStore
         //        });
         //    }
         //}
+
+        private Image CreateImage(string filePath)
+        {
+            ImageSource scource = new BitmapImage(new Uri(filePath, UriKind.Relative));
+            Image image = new Image
+            {
+                Source = scource,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(5)
+            };
+
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
+            return image;
+        }
+
+
+        
 
 
     }
