@@ -24,11 +24,43 @@ namespace WPFStore
         public decimal Price;
         public string Image;
         public int Count = 1;
+
+        public Product()
+        {
+
+        }
+        public Product(string title, string description, decimal price, string image)
+        {
+            Title = title;
+            Description = description;
+            Price = price;
+            Image = image;
+        }
+
+        public void PriceCap(decimal priceCap)
+        {
+            if (priceCap > 200)
+            {
+                throw new InvalidOperationException("You have already reached your max limit!");
+            }
+        }
+
     }
     public class Discount
     {
         public string Code { get; set; }
         public decimal CodePercentage { get; set; }
+
+        public Discount()
+        {
+
+        }
+        public Discount(string code, decimal codePercentage)
+        {
+            Code = code;
+            CodePercentage = codePercentage;
+        }
+
     }
     public partial class MainWindow : Window
     {
@@ -837,7 +869,6 @@ namespace WPFStore
             {
                 cartList.Add(item);
             }
-
         }
 
         // Jag bör använda mig utav metoden nedan
@@ -876,6 +907,65 @@ namespace WPFStore
             return image;
         }
 
+
+        public static List<Product> ReadStaticCSVDisplayFile()
+        {
+            var filePath = "CurrentProduct.csv";
+
+            var lines = File.ReadAllLines(filePath);
+            var unitTestList = new List<Product>();
+
+            foreach (var line in lines)
+            {
+                var columnsInLine = line.Split(',');
+
+                var productList = new Product
+                {
+                    Title = columnsInLine[0],
+                    Description = columnsInLine[1],
+                    Price = decimal.Parse(columnsInLine[2]),
+                    Image = columnsInLine[3]
+                };
+
+                unitTestList.Add(productList);
+            }
+
+            return unitTestList;
+        }
+
+        public static List<Discount> ReadStaticCSVDiscountFile()
+        {
+            var filePath = "Discount.csv";
+            var unitTestList = new List<Discount>();
+            var lines = File.ReadAllLines(filePath);
+
+            var d = new Discount();
+
+            foreach (var line in lines)
+            {
+                var columnsInLine = line.Split(',');
+
+                var discountList = new Discount
+                {
+                    Code = columnsInLine[0],
+                    CodePercentage = decimal.Parse(columnsInLine[1].Replace('.',','))
+                };
+
+                unitTestList.Add(discountList);
+            }
+
+            return unitTestList;
+        }
+
+        public static bool SaveToCsvCart(string csv)
+        {
+            if (!string.IsNullOrEmpty(csv))
+            {
+                File.WriteAllText(@"C:\Windows\Temp\savedChart.csv", csv);
+                return true;
+            }
+            return false;
+        }
 
         
 
