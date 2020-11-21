@@ -109,7 +109,6 @@ namespace WPFStore
         decimal sum = 0;
         decimal percentageSum = 0;
         decimal discountSum = 0;
-        int storeDictionaryValue = 0;
         bool once = true;
 
         public MainWindow()
@@ -515,6 +514,7 @@ namespace WPFStore
 
         private void BackHandle(object sender, RoutedEventArgs e)
         {
+            ClearHandle(sender, e);
             Start();
         }
 
@@ -748,7 +748,9 @@ namespace WPFStore
         {
             //Lägg till en try n catch ifall man ej valt något av removed valen
             int bikeIndex = productListBox.SelectedIndex;
+
             var bikeKey = resultListBox.SelectedItem.ToString().Substring(0, resultListBox.SelectedItem.ToString().IndexOf('x') - 3);
+
             resultListBox.Items.Add($"{productList[bikeIndex].Title} x {productList[bikeIndex].Price} Kr");
 
             if (adjustmentDictionary[bikeKey] == 1)
@@ -832,20 +834,29 @@ namespace WPFStore
         }
         private void ClearHandle(object sender, RoutedEventArgs e)
         {
-            foreach (var pair in adjustmentDictionary)
+            if (MessageBox.Show("Are you sure?", "Clear the list", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
             {
-                resultListBox.Items.Clear();
-                adjustmentDictionary.Remove(pair.Key);
-                resultListBox.Items.Remove($"{pair.Key} x {pair.Value}");
+
+            }
+            else
+            {
+                foreach (var pair in adjustmentDictionary)
+                {
+                    resultListBox.Items.Clear();
+                    adjustmentDictionary.Remove(pair.Key);
+                    resultListBox.Items.Remove($"{pair.Key} x {pair.Value}");
+                }
+
+                sum = 0;
+                percentageSum = 0;
+                sumLabel.Content = $"Total amount: {sum}";
+                addDiscountButton.Visibility = Visibility.Visible;
+                discountSumLabel.Content = $"Discount percentage: {percentageSum} % ";
             }
 
-            sum = 0;
-            percentageSum = 0;
-            sumLabel.Content = $"Total amount: {sum}";
-            addDiscountButton.Visibility = Visibility.Visible;
-            discountSumLabel.Content = $"Discount percentage: {percentageSum} % ";
+            
         }
-        
+
 
         public void ReadCSVDisplayFile()
         {
@@ -948,7 +959,7 @@ namespace WPFStore
                 var discountList = new Discount
                 {
                     Code = columnsInLine[0],
-                    CodePercentage = decimal.Parse(columnsInLine[1].Replace('.',','))
+                    CodePercentage = decimal.Parse(columnsInLine[1].Replace('.', ','))
                 };
 
                 unitTestList.Add(discountList);
@@ -967,7 +978,7 @@ namespace WPFStore
             return false;
         }
 
-        
+
 
 
     }
